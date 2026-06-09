@@ -82,7 +82,8 @@ Group #13
 
 <td align="center">
 
-<img width="102" height="102" alt="WhatsApp Image 2026-05-03 at 4 35 08 AM" src="https://github.com/user-attachments/assets/641d0501-db2a-4bcc-ae2d-aec3719de333" />
+<img width="102" height="102" alt="<img width="1254" height="1254" alt="PPP" src="https://github.com/user-attachments/assets/94d3157d-4ac7-4ee9-9439-3f76cf3789f2" />
+" />
 
 ### Malik Muhammad Sanaullah
 `24P-0554`
