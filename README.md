@@ -82,7 +82,7 @@ Group #13
 
 <td align="center">
 
-<img width="102" height="102" alt="<img width="1254" height="1254" alt="PPP" src="https://github.com/user-attachments/assets/94d3157d-4ac7-4ee9-9439-3f76cf3789f2" />
+<img width="102" height="102" alt="PPP" src="https://github.com/user-attachments/assets/94d3157d-4ac7-4ee9-9439-3f76cf3789f2" />
 " />
 
 ### Malik Muhammad Sanaullah
