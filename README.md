@@ -80,7 +80,7 @@ Spring 2025
 ### Malik Muhammad Sanaullah
 `24P-0554`
 
-[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=flat-square&logo=github)](https://github.com/Malik-Sanaullah)
+[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=flat-square&logo=github)](https://github.com/SamSec404)
 
 </td>
 </tr>
