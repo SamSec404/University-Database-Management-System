@@ -65,7 +65,7 @@ Spring 2025
 <tr>
 <td align="center" width="50%">
 
-<img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" width="90" style="border-radius:50%"/>
+<img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" width="1000" style="border-radius:50%"/>
 
 ### Muhammad Ibrahim Khatak
 `24P-0648`
