@@ -1,4 +1,4 @@
-<div align="center">
+<div align="">
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=280&color=0:1e3a8a,40:2563eb,70:7c3aed,100:9333ea&text=University%20ERP%20Database%20System&fontColor=ffffff&fontSize=40&fontAlignY=38&desc=Enterprise-Grade%20Academic%20Information%20Platform%20%7C%20MySQL%208.0&descAlignY=58&animation=fadeIn" width="100%" />
 
