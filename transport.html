@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Transport — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+.vehicle-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding:18px; transition: all .25s; display:flex; flex-direction:column; gap:12px;
+}
+.vehicle-card:hover { border-color: var(--border-2); transform:translateY(-2px); box-shadow:var(--shadow); }
+.vehicle-header { display:flex; align-items:center; gap:12px; }
+.vehicle-icon {
+  width:44px; height:44px; border-radius:10px; background: var(--grad);
+  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
+}
+.vehicle-number { font-family: var(--font-mono); font-size:13px; font-weight:700; color:#fff; }
+.vehicle-model  { font-size:11px; color: var(--muted); margin-top:1px; }
+
+.status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dot-active      { background:#34d399; }
+.dot-maintenance { background:#fbbf24; }
+.dot-retired     { background:#f87171; }
+
+.route-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding:18px; display:flex; align-items:center; gap:16px; transition:all .25s;
+}
+.route-card:hover { border-color: var(--border-2); }
+.route-num {
+  width:36px; height:36px; border-radius:10px; background: var(--grad-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color: var(--violet); font-family: var(--font-mono); flex-shrink:0;
+}
+.route-name { font-size:13px; font-weight:600; color:#fff; }
+.route-sub  { font-size:11px; color: var(--muted); margin-top:2px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item active" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Transport</h1><p>Fleet management, routes and student registrations</p></div>
+    <div class="topbar-right"><span id="tr-badge" class="topbar-badge">Loading…</span></div>
+  </header>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px" id="tr-stats">
+      <div class="stat-card"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:20px">
+      <button class="tab-top active" id="tab-fleet"  onclick="switchTab('fleet')">🚌 Fleet</button>
+      <button class="tab-top"        id="tab-routes" onclick="switchTab('routes')">🗺️ Routes</button>
+    </div>
+
+    <!-- Fleet pane -->
+    <div id="pane-fleet">
+      <div class="grid-2 mb-20">
+        <!-- Vehicle cards -->
+        <div>
+          <div id="vehicle-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px"></div>
+        </div>
+
+        <!-- Fleet chart -->
+        <div class="card">
+          <div class="card-header"><div><h3>Fleet by Type</h3><p>Vehicle distribution by category</p></div></div>
+          <div class="card-body chart-wrap"><canvas id="fleetChart"></canvas></div>
+          <div class="card-body" style="border-top:1px solid var(--border)">
+            <h4 style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Fleet Status</h4>
+            <div id="fleet-status-bars"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Routes pane -->
+    <div id="pane-routes" class="hidden">
+      <div class="grid-2 mb-20">
+        <div>
+          <div class="card-header" style="padding:0 0 14px 0;border:none">
+            <div><h3 style="font-size:14px;font-weight:600;color:#fff">All Routes</h3><p style="font-size:11px;color:var(--muted)">Active transport corridors</p></div>
+          </div>
+          <div id="routes-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div><h3>Students per Route</h3><p>Registration count by route</p></div></div>
+          <div class="card-body chart-wrap"><canvas id="routeChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<style>
+.tab-top { padding:12px 20px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s; }
+.tab-top.active { color:var(--violet);border-bottom-color:var(--violet); }
+</style>
+
+<script>
+const API = 'http://localhost:3000';
+let trData = null;
+
+function switchTab(tab) {
+  ['fleet','routes'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t===tab);
+    document.getElementById(`pane-${t}`).classList.toggle('hidden', t!==tab);
+  });
+}
+
+const VEHICLE_ICONS = { Bus:'🚌', Van:'🚐', Coaster:'🚍', 'Mini Bus':'🚌' };
+const statusDot = { Active:'dot-active', Maintenance:'dot-maintenance', Retired:'dot-retired' };
+const statusBadge = { Active:'badge-green', Maintenance:'badge-yellow', Retired:'badge-red' };
+const CHART_COLORS = ['#60a5fa','#a78bfa','#34d399','#fbbf24','#fb923c','#f87171'];
+
+async function loadTransport() {
+  try {
+    trData = await fetch(`${API}/api/transport/overview`).then(r=>r.json());
+    const { vehicles, routes } = trData;
+
+    const activeV = vehicles.filter(v=>v.status==='Active').length;
+    const maintV  = vehicles.filter(v=>v.status==='Maintenance').length;
+    const totalStudents = routes.reduce((s,r)=>s+Number(r.registered_students||0),0);
+
+    document.getElementById('tr-badge').textContent = `${vehicles.length} Vehicles`;
+    document.getElementById('tr-stats').innerHTML = [
+      { icon:'bus',         cls:'ic-blue',   label:'Total Vehicles',     val: vehicles.length },
+      { icon:'circle-check',cls:'ic-green',  label:'Active',             val: activeV },
+      { icon:'wrench',      cls:'ic-yellow', label:'In Maintenance',     val: maintV },
+      { icon:'users',       cls:'ic-purple', label:'Registered Students',val: totalStudents },
+    ].map(s=>`<div class="stat-card">
+      <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div></div>`).join('');
+
+    // Vehicle cards
+    document.getElementById('vehicle-grid').innerHTML = vehicles.map(v => `
+      <div class="vehicle-card">
+        <div class="vehicle-header">
+          <div class="vehicle-icon">${VEHICLE_ICONS[v.vehicle_type]||'🚌'}</div>
+          <div>
+            <div class="vehicle-number">${v.vehicle_number}</div>
+            <div class="vehicle-model">${v.vehicle_type} · ${v.model||'—'}</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            <div class="status-dot ${statusDot[v.status]||'dot-retired'}"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="badge ${statusBadge[v.status]||'badge-gray'}">${v.status}</span>
+          <span class="badge badge-blue">${v.seating_capacity} seats</span>
+          ${v.registered_students>0?`<span class="badge badge-purple">${v.registered_students} students</span>`:''}
+        </div>
+      </div>`).join('');
+
+    // Fleet type chart
+    const typeCount = {};
+    vehicles.forEach(v=>typeCount[v.vehicle_type]=(typeCount[v.vehicle_type]||0)+1);
+    new Chart(document.getElementById('fleetChart'),{
+      type:'doughnut',
+      data:{ labels:Object.keys(typeCount), datasets:[{ data:Object.values(typeCount), backgroundColor:CHART_COLORS, borderWidth:0, hoverOffset:6 }] },
+      options:{ cutout:'60%', plugins:{ legend:{ position:'bottom', labels:{ color:'#8892b0', boxWidth:12, padding:14 } } } }
+    });
+
+    // Status progress bars
+    const total = vehicles.length;
+    document.getElementById('fleet-status-bars').innerHTML = ['Active','Maintenance','Retired'].map((st,i) => {
+      const cnt = vehicles.filter(v=>v.status===st).length;
+      const pct = total>0?Math.round((cnt/total)*100):0;
+      const colors = ['var(--green)','var(--yellow)','var(--red)'];
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px">
+          <span>${st}</span><span class="text-mono">${cnt} (${pct}%)</span>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%;background:${colors[i]}"></div></div>
+      </div>`;
+    }).join('');
+
+    // Routes list
+    document.getElementById('routes-list').innerHTML = routes.map((r,i) => `
+      <div class="route-card">
+        <div class="route-num">R${i+1}</div>
+        <div style="flex:1">
+          <div class="route-name">${r.route_name}</div>
+          <div class="route-sub">${r.estimated_distance_km?r.estimated_distance_km+' km':''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--font-mono);font-size:16px;font-weight:800;color:#fff">${r.registered_students}</div>
+          <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">students</div>
+        </div>
+      </div>`).join('');
+
+    // Route chart
+    new Chart(document.getElementById('routeChart'),{
+      type:'bar',
+      data:{
+        labels: routes.map(r => r.route_name.length>18?r.route_name.slice(0,18)+'…':r.route_name),
+        datasets:[{ label:'Students', data:routes.map(r=>r.registered_students), backgroundColor:CHART_COLORS, borderRadius:6, borderSkipped:false }]
+      },
+      options:{
+        indexAxis:'y',
+        plugins:{ legend:{ display:false } },
+        scales:{
+          x:{ ticks:{ color:'#8892b0' }, grid:{ color:'rgba(30,58,95,.3)' }, beginAtZero:true },
+          y:{ ticks:{ color:'#8892b0', font:{size:11} }, grid:{ display:false } }
+        }
+      }
+    });
+
+  } catch(e) {
+    document.getElementById('tr-stats').innerHTML = `<div class="stat-card"><div class="empty-state"><i class="fa fa-plug"></i><h3>Cannot connect to server</h3></div></div>`;
+  }
+}
+
+loadTransport();
+</script>
+</body>
+</html>
