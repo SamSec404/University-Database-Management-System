@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Students — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+.avatar {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--grad); display: flex; align-items: center;
+  justify-content: center; font-size: 13px; font-weight: 700;
+  color: #fff; flex-shrink: 0; text-transform: uppercase;
+}
+.student-name-cell { display: flex; align-items: center; gap: 10px; }
+.student-name-cell .name { font-weight: 600; color: #fff; font-size: 13px; }
+.student-name-cell .reg  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.cgpa-bar { display: flex; align-items: center; gap: 8px; }
+.cgpa-text { font-family: var(--font-mono); font-size: 12px; font-weight: 700; min-width: 32px; }
+.cgpa-track { flex: 1; height: 5px; background: var(--border); border-radius: 4px; overflow: hidden; min-width: 60px; }
+.cgpa-fill  { height: 100%; border-radius: 4px; background: var(--grad); transition: width .4s; }
+.btn-view { background: rgba(124,58,237,.15); color: #a78bfa; border: 1px solid rgba(124,58,237,.2);
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.btn-view:hover { background: rgba(124,58,237,.3); }
+.pagination { display: flex; align-items: center; gap: 8px; margin-top: 16px; justify-content: flex-end; font-size: 13px; }
+.page-info { color: var(--muted); }
+.page-btn { background: var(--card); border: 1px solid var(--border); color: var(--text);
+  padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all .2s; }
+.page-btn:hover { border-color: var(--indigo); }
+.page-btn:disabled { opacity: .35; cursor: default; }
+
+/* Student detail modal specifics */
+.detail-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(124,58,237,.08));
+}
+.detail-avatar {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: var(--grad); display: flex; align-items: center;
+  justify-content: center; font-size: 22px; font-weight: 800; color: #fff;
+}
+.detail-tabs {
+  display: flex; gap: 4px; padding: 0 24px; margin-top: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 12px 16px; font-size: 13px; font-weight: 600;
+  color: var(--muted); background: none; border: none;
+  border-bottom: 2px solid transparent; cursor: pointer; transition: all .2s;
+}
+.tab-btn.active { color: var(--violet); border-bottom-color: var(--violet); }
+.tab-content { display: none; padding: 20px 24px; max-height: 380px; overflow-y: auto; }
+.tab-content.active { display: block; }
+
+.enroll-table td { padding: 8px 10px; font-size: 12px; }
+.enroll-table thead th { padding: 8px 10px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item active" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Students</h1>
+      <p>Search, view and manage student records</p>
+    </div>
+    <div class="topbar-right">
+      <span id="student-count" class="topbar-badge">Loading…</span>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Stats row -->
+    <div class="stats-grid" id="student-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fa fa-search"></i>
+        <input id="search" type="text" placeholder="Search by name, reg no, email…"/>
+      </div>
+      <select id="filter-status" class="filter">
+        <option value="">All Statuses</option>
+        <option value="Active">Active</option>
+        <option value="Graduated">Graduated</option>
+        <option value="Suspended">Suspended</option>
+        <option value="Dropped">Dropped</option>
+      </select>
+      <select id="filter-program" class="filter"><option value="">All Programs</option></select>
+      <button class="btn btn-ghost btn-sm" onclick="clearFilters()"><i class="fa fa-rotate-left"></i> Clear</button>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="card-header">
+        <div><h3>Student Directory</h3><p id="table-subtitle">Loading records…</p></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Program</th>
+              <th>Department</th>
+              <th>Gender</th>
+              <th>Admission</th>
+              <th>CGPA</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="student-tbody">
+            <tr><td colspan="8"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px 16px" class="flex-between">
+        <div id="row-info" class="text-sm text-muted"></div>
+        <div class="pagination">
+          <button class="page-btn" id="btn-prev" onclick="changePage(-1)" disabled>← Prev</button>
+          <span class="page-info" id="page-info">Page 1</span>
+          <button class="page-btn" id="btn-next" onclick="changePage(1)">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Student detail modal -->
+<div id="student-modal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:680px">
+    <div id="detail-header" class="detail-header"></div>
+    <div class="detail-tabs">
+      <button class="tab-btn active" onclick="switchTab('info')">📋 Info</button>
+      <button class="tab-btn" onclick="switchTab('enrollments')">📚 Enrollments</button>
+    </div>
+    <div id="tab-info" class="tab-content active"></div>
+    <div id="tab-enrollments" class="tab-content"></div>
+    <div class="modal-footer">
+      <a id="transcript-link" href="#" class="btn btn-ghost btn-sm"><i class="fa fa-scroll"></i> View Transcript</a>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let allStudents = [], filtered = [], page = 1;
+const PER_PAGE = 25;
+
+function toast(msg, type='info') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fa fa-${type==='success'?'check-circle':'info-circle'}"></i> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+function statusBadge(s) {
+  const map = { Active:'badge-green', Graduated:'badge-blue', Suspended:'badge-red', Dropped:'badge-gray' };
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+function initials(name) { return name.split(' ').map(w=>w[0]).slice(0,2).join(''); }
+function cgpaColor(g) { return g>=3.5?'#34d399':g>=3?'#60a5fa':g>=2?'#fbbf24':'#f87171'; }
+
+async function loadPrograms() {
+  const progs = await fetch(`${API}/api/programs`).then(r=>r.json()).catch(()=>[]);
+  const sel = document.getElementById('filter-program');
+  progs.forEach(p => { sel.innerHTML += `<option value="${p.program_id}">${p.program_name} (${p.degree_level})</option>`; });
+}
+
+async function loadStudents() {
+  try {
+    allStudents = await fetch(`${API}/api/students?limit=500`).then(r=>r.json());
+    buildStats();
+    applyFilters();
+  } catch(e) {
+    toast('Cannot reach server.','error');
+    document.getElementById('student-tbody').innerHTML =
+      '<tr><td colspan="8"><div class="empty-state"><i class="fa fa-plug"></i><h3>Server offline</h3><p>Run node server.js</p></div></td></tr>';
+  }
+}
+
+function buildStats() {
+  const total   = allStudents.length;
+  const active  = allStudents.filter(s=>s.status==='Active').length;
+  const grads   = allStudents.filter(s=>s.status==='Graduated').length;
+  const avgCgpa = total ? (allStudents.reduce((a,s)=>a+(parseFloat(s.cgpa)||0),0)/total).toFixed(2) : '0.00';
+  document.getElementById('student-count').textContent = `${total} Students`;
+  document.getElementById('student-stats').innerHTML = [
+    { icon:'users', cls:'ic-blue',   label:'Total',     val: total },
+    { icon:'circle-check', cls:'ic-green',  label:'Active',    val: active },
+    { icon:'graduation-cap', cls:'ic-purple', label:'Graduated', val: grads },
+    { icon:'chart-line', cls:'ic-yellow', label:'Avg CGPA',  val: avgCgpa },
+  ].map(s=>`<div class="stat-card">
+    <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+    <div class="stat-value">${s.val}</div>
+    <div class="stat-label">${s.label}</div></div>`).join('');
+}
+
+function applyFilters() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const prog   = document.getElementById('filter-program').value;
+  filtered = allStudents.filter(s => {
+    const matchSearch = !search ||
+      s.full_name.toLowerCase().includes(search) ||
+      s.registration_no.toLowerCase().includes(search) ||
+      (s.email||'').toLowerCase().includes(search);
+    return matchSearch &&
+      (!status || s.status === status) &&
+      (!prog   || String(s.program_id) === prog);
+  });
+  page = 1;
+  renderTable();
+}
+
+function renderTable() {
+  const start  = (page-1)*PER_PAGE;
+  const slice  = filtered.slice(start, start+PER_PAGE);
+  const total  = filtered.length;
+  document.getElementById('table-subtitle').textContent = `${total} student${total!==1?'s':''} found`;
+  document.getElementById('row-info').textContent = `Showing ${start+1}–${Math.min(start+PER_PAGE,total)} of ${total}`;
+  document.getElementById('page-info').textContent = `Page ${page} of ${Math.ceil(total/PER_PAGE)||1}`;
+  document.getElementById('btn-prev').disabled = page <= 1;
+  document.getElementById('btn-next').disabled = page >= Math.ceil(total/PER_PAGE);
+
+  if (!slice.length) {
+    document.getElementById('student-tbody').innerHTML =
+      `<tr><td colspan="8"><div class="empty-state"><i class="fa fa-user-slash"></i><h3>No Students Found</h3><p>Try adjusting filters</p></div></td></tr>`;
+    return;
+  }
+  document.getElementById('student-tbody').innerHTML = slice.map(s => {
+    const cgpa = parseFloat(s.cgpa)||0;
+    const pct  = (cgpa/4)*100;
+    const clr  = cgpaColor(cgpa);
+    return `<tr>
+      <td><div class="student-name-cell">
+        <div class="avatar">${initials(s.full_name)}</div>
+        <div><div class="name">${s.full_name}</div><div class="reg">${s.registration_no}</div></div>
+      </div></td>
+      <td><span class="text-sm">${s.program_name}</span><br><span class="text-xs text-muted">${s.degree_level}</span></td>
+      <td class="text-sm">${s.department_name}</td>
+      <td class="text-sm text-muted">${s.gender||'—'}</td>
+      <td class="text-mono text-sm">${s.admission_date||'—'}</td>
+      <td><div class="cgpa-bar">
+        <span class="cgpa-text" style="color:${clr}">${cgpa.toFixed(2)}</span>
+        <div class="cgpa-track"><div class="cgpa-fill" style="width:${pct}%;background:${clr}"></div></div>
+      </div></td>
+      <td>${statusBadge(s.status)}</td>
+      <td><button class="btn-view" onclick="viewStudent(${s.student_id})"><i class="fa fa-eye"></i> View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function changePage(d) { page += d; renderTable(); window.scrollTo(0,0); }
+function clearFilters() {
+  document.getElementById('search').value = '';
+  document.getElementById('filter-status').value = '';
+  document.getElementById('filter-program').value = '';
+  applyFilters();
+}
+
+// Debounce search
+let searchTimer;
+document.getElementById('search').addEventListener('input', () => {
+  clearTimeout(searchTimer); searchTimer = setTimeout(applyFilters, 300);
+});
+document.getElementById('filter-status').addEventListener('change', applyFilters);
+document.getElementById('filter-program').addEventListener('change', applyFilters);
+
+async function viewStudent(id) {
+  document.getElementById('student-modal').classList.remove('hidden');
+  document.getElementById('tab-info').innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+  document.getElementById('tab-enrollments').innerHTML = '';
+
+  try {
+    const [student, enrollments] = await Promise.all([
+      fetch(`${API}/api/students/${id}`).then(r=>r.json()),
+      fetch(`${API}/api/enrollments?student_id=${id}`).then(r=>r.json())
+    ]);
+
+    document.getElementById('transcript-link').href = `transcript.html?id=${id}`;
+
+    // Header
+    document.getElementById('detail-header').innerHTML = `
+      <div class="detail-avatar">${initials(student.full_name)}</div>
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#fff">${student.full_name}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">${student.registration_no} · ${student.program_name} · ${student.degree_level}</div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          ${statusBadge(student.status)}
+          <span class="badge badge-blue">${student.department_name}</span>
+          <span class="cgpa-badge" style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:#34d399;background:rgba(16,185,129,.1);padding:3px 9px;border-radius:6px">CGPA ${parseFloat(student.cgpa).toFixed(2)}</span>
+        </div>
+      </div>`;
+
+    // Info tab
+    document.getElementById('tab-info').innerHTML = `
+      <div class="form-grid-2">
+        <div class="info-list">
+          <div class="info-item"><span class="info-label">Reg No</span><span class="info-value text-mono">${student.registration_no}</span></div>
+          <div class="info-item"><span class="info-label">Email</span><span class="info-value">${student.email||'—'}</span></div>
+          <div class="info-item"><span class="info-label">Phone</span><span class="info-value">${student.phone||'—'}</span></div>
+          <div class="info-item"><span class="info-label">Gender</span><span class="info-value">${student.gender||'—'}</span></div>
+          <div class="info-item"><span class="info-label">Blood Group</span><span class="info-value">${student.blood_group||'—'}</span></div>
+        </div>
+        <div class="info-list">
+          <div class="info-item"><span class="info-label">Admission</span><span class="info-value text-mono">${student.admission_date||'—'}</span></div>
+          <div class="info-item"><span class="info-label">Program</span><span class="info-value">${student.program_name}</span></div>
+          <div class="info-item"><span class="info-label">Degree</span><span class="info-value">${student.degree_level}</span></div>
+          <div class="info-item"><span class="info-label">Department</span><span class="info-value">${student.department_name}</span></div>
+          <div class="info-item"><span class="info-label">Total Credits</span><span class="info-value text-mono">${student.total_credit_hours}</span></div>
+        </div>
+      </div>`;
+
+    // Enrollments tab
+    if (!enrollments.length) {
+      document.getElementById('tab-enrollments').innerHTML = '<div class="empty-state"><i class="fa fa-inbox"></i><h3>No Enrollments</h3></div>';
+    } else {
+      document.getElementById('tab-enrollments').innerHTML = `
+        <table class="enroll-table"><thead><tr>
+          <th>Course</th><th>Section</th><th>Semester</th><th>Credits</th><th>Grade</th>
+        </tr></thead><tbody>
+        ${enrollments.map(e=>{
+          const g = e.grade;
+          const gc = g?g[0]==='A'?'grade-A':g[0]==='B'?'grade-B':g[0]==='C'?'grade-C':g[0]==='D'?'grade-D':'grade-F':'grade-na';
+          return `<tr>
+            <td><strong>${e.course_code}</strong> ${e.course_title}</td>
+            <td class="text-mono text-sm">${e.section_name||'—'}</td>
+            <td class="text-sm">${e.semester_name} ${e.session_name}</td>
+            <td class="text-mono text-sm" style="text-align:center">${e.credit_hours}</td>
+            <td><span class="grade-pill ${gc}">${g||'—'}</span></td>
+          </tr>`;
+        }).join('')}
+        </tbody></table>`;
+    }
+  } catch(e) {
+    document.getElementById('tab-info').innerHTML = `<div class="empty-state"><i class="fa fa-triangle-exclamation"></i><h3>Error loading student</h3></div>`;
+  }
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active', ['info','enrollments'][i]===name));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+function closeModal() { document.getElementById('student-modal').classList.add('hidden'); }
+document.getElementById('student-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+
+loadPrograms();
+loadStudents();
+</script>
+</body>
+</html>
