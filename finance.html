@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finance — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+.fin-hero {
+  background: linear-gradient(135deg,#065f46 0%,#047857 50%,#10b981 100%);
+  border-radius: var(--radius); padding:28px 32px; margin-bottom:24px;
+  display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden;
+}
+.fin-hero::before { content:''; position:absolute; top:-40px; right:-40px; width:200px; height:200px; background:rgba(255,255,255,.06); border-radius:50%; }
+.fin-info { position:relative; z-index:1; }
+.fin-info h2 { font-size:20px; font-weight:800; color:#fff; }
+.fin-info p  { font-size:12px; color:rgba(255,255,255,.7); margin-top:4px; }
+.fin-meta { display:flex; gap:28px; margin-top:16px; }
+.fin-meta-item .v { font-size:20px; font-weight:800; color:#fff; font-family:var(--font-mono); }
+.fin-meta-item .l { font-size:10px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:1px; }
+.fin-icon { font-size:60px; opacity:.12; position:relative; z-index:1; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item active" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Finance</h1><p>Fee invoices, payments and financial overview</p></div>
+    <div class="topbar-right"><span id="fin-badge" class="topbar-badge">Loading…</span></div>
+  </header>
+
+  <div class="content">
+    <!-- Hero banner -->
+    <div class="fin-hero">
+      <div class="fin-info">
+        <h2>Financial Overview</h2>
+        <p>University revenue, collections and outstanding balances</p>
+        <div class="fin-meta">
+          <div class="fin-meta-item"><div class="v" id="fh-invoiced">—</div><div class="l">Total Invoiced</div></div>
+          <div class="fin-meta-item"><div class="v" id="fh-collected">—</div><div class="l">Collected</div></div>
+          <div class="fin-meta-item"><div class="v" id="fh-overdue">—</div><div class="l">Overdue</div></div>
+          <div class="fin-meta-item"><div class="v" id="fh-pending">—</div><div class="l">Pending</div></div>
+        </div>
+      </div>
+      <div class="fin-icon">💰</div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px" id="fin-stats">
+      <div class="stat-card"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Charts + Invoice list -->
+    <div class="grid-2 mb-20">
+      <div class="card">
+        <div class="card-header"><div><h3>Invoice Status</h3><p>Distribution by payment status</p></div></div>
+        <div class="card-body chart-wrap"><canvas id="statusChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h3>Amount by Status</h3><p>Total PKR per invoice status</p></div></div>
+        <div class="card-body chart-wrap"><canvas id="amountChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Invoice table -->
+    <div class="card">
+      <div class="card-header">
+        <div><h3>Invoice Register</h3><p id="inv-subtitle">Loading…</p></div>
+        <div class="search-box" style="max-width:260px">
+          <i class="fa fa-search"></i>
+          <input id="inv-search" type="text" placeholder="Search student…"/>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Student</th><th>Reg No</th><th>Semester</th>
+            <th>Invoice Date</th><th>Due Date</th><th>Amount (PKR)</th><th>Status</th>
+          </tr></thead>
+          <tbody id="inv-tbody">
+            <tr><td colspan="8"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let allInvoices = [];
+
+function fmt(n) { return Number(n||0).toLocaleString('en-PK',{minimumFractionDigits:0}); }
+const statusColor = { 'Paid':'badge-green','Overdue':'badge-red','Pending':'badge-yellow','Partially Paid':'badge-blue' };
+
+async function loadFinance() {
+  try {
+    const [summary, invoices] = await Promise.all([
+      fetch(`${API}/api/finance/summary`).then(r=>r.json()),
+      fetch(`${API}/api/finance/invoices`).then(r=>r.json())
+    ]);
+
+    allInvoices = invoices;
+    const t = summary.totals;
+
+    document.getElementById('fh-invoiced').textContent  = `₨${fmt(t.total_invoiced)}`;
+    document.getElementById('fh-collected').textContent = `₨${fmt(t.collected)}`;
+    document.getElementById('fh-overdue').textContent   = `₨${fmt(t.overdue)}`;
+    document.getElementById('fh-pending').textContent   = `₨${fmt(t.pending)}`;
+    document.getElementById('fin-badge').textContent    = `${t.total_invoices} Invoices`;
+
+    document.getElementById('fin-stats').innerHTML = [
+      { icon:'file-invoice',  cls:'ic-blue',   label:'Total Invoices',  val: t.total_invoices },
+      { icon:'circle-check',  cls:'ic-green',  label:'Paid',            val: summary.byStatus.find(x=>x.status==='Paid')?.cnt||0 },
+      { icon:'clock',         cls:'ic-yellow', label:'Pending',         val: summary.byStatus.find(x=>x.status==='Pending')?.cnt||0 },
+      { icon:'triangle-exclamation',cls:'ic-red',label:'Overdue',       val: summary.byStatus.find(x=>x.status==='Overdue')?.cnt||0 },
+    ].map(s=>`<div class="stat-card">
+      <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div></div>`).join('');
+
+    // Charts
+    const COLS = ['#34d399','#fbbf24','#f87171','#60a5fa','#a78bfa'];
+    const labels = summary.byStatus.map(x=>x.status);
+    const counts = summary.byStatus.map(x=>x.cnt);
+    const amounts= summary.byStatus.map(x=>Number(x.amount||0));
+
+    new Chart(document.getElementById('statusChart'),{
+      type:'doughnut',
+      data:{ labels, datasets:[{ data:counts, backgroundColor:COLS, borderWidth:0, hoverOffset:6 }] },
+      options:{ cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{ color:'#8892b0', boxWidth:12, padding:16 } } } }
+    });
+    new Chart(document.getElementById('amountChart'),{
+      type:'bar',
+      data:{ labels, datasets:[{ data:amounts, backgroundColor:COLS, borderRadius:6, borderSkipped:false }] },
+      options:{
+        plugins:{ legend:{ display:false } },
+        scales:{
+          x:{ ticks:{ color:'#8892b0' }, grid:{ color:'rgba(30,58,95,.3)' } },
+          y:{ ticks:{ color:'#8892b0', callback:v=>'₨'+fmt(v) }, grid:{ color:'rgba(30,58,95,.3)' }, beginAtZero:true }
+        }
+      }
+    });
+
+    renderInvoices(allInvoices);
+  } catch(e) {
+    document.getElementById('fin-stats').innerHTML = `<div class="stat-card col-span-4"><div class="empty-state"><i class="fa fa-plug"></i><h3>Cannot connect to server</h3></div></div>`;
+  }
+}
+
+document.getElementById('inv-search').addEventListener('input', () => {
+  const q = document.getElementById('inv-search').value.toLowerCase();
+  renderInvoices(allInvoices.filter(i =>
+    (i.student_name||'').toLowerCase().includes(q) ||
+    (i.registration_no||'').toLowerCase().includes(q)
+  ));
+});
+
+function renderInvoices(list) {
+  document.getElementById('inv-subtitle').textContent = `${list.length} invoice${list.length!==1?'s':''}`;
+  document.getElementById('inv-tbody').innerHTML = list.length ? list.map(i => `
+    <tr>
+      <td class="text-mono text-sm">#${i.invoice_id}</td>
+      <td style="font-weight:600;color:#fff;font-size:13px">${i.student_name}</td>
+      <td class="text-mono text-sm">${i.registration_no}</td>
+      <td class="text-sm">${i.semester_name} ${i.session_name}</td>
+      <td class="text-mono text-sm">${i.invoice_date}</td>
+      <td class="text-mono text-sm">${i.due_date}</td>
+      <td class="text-mono" style="font-weight:700;color:#fff">₨${fmt(i.total_amount)}</td>
+      <td><span class="badge ${statusColor[i.status]||'badge-gray'}">${i.status}</span></td>
+    </tr>`).join('') :
+    `<tr><td colspan="8"><div class="empty-state"><i class="fa fa-inbox"></i><h3>No invoices found</h3></div></td></tr>`;
+}
+
+loadFinance();
+</script>
+</body>
+</html>
