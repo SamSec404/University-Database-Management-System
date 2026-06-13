@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+.hero-banner {
+  background: var(--grad);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 240px; height: 240px;
+  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+}
+.hero-banner::after {
+  content: '';
+  position: absolute; bottom: -60px; right: 80px;
+  width: 160px; height: 160px;
+  background: rgba(255,255,255,.04);
+  border-radius: 50%;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-content h2 { font-size: 24px; font-weight: 800; color: #fff; }
+.hero-content p  { font-size: 13px; color: rgba(255,255,255,.75); margin-top: 6px; }
+.hero-meta { display: flex; gap: 24px; margin-top: 16px; }
+.hero-meta-item { text-align: center; }
+.hero-meta-item .v { font-size: 22px; font-weight: 800; color: #fff; font-family: var(--font-mono); }
+.hero-meta-item .l { font-size: 10px; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: 1px; }
+.hero-icon { font-size: 64px; opacity: .15; position: relative; z-index: 1; }
+
+.top-student-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid rgba(30,58,95,.4);
+}
+.top-student-card:last-child { border-bottom: none; }
+.rank {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--grad-soft); display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 800;
+  color: var(--violet); font-family: var(--font-mono); flex-shrink: 0;
+}
+.rank.gold   { background: rgba(245,158,11,.15); color: #fbbf24; }
+.rank.silver { background: rgba(99,115,129,.15); color: #94a3b8; }
+.rank.bronze { background: rgba(249,115,22,.15); color: #fb923c; }
+.student-info { flex: 1; min-width: 0; }
+.student-info .name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.student-info .prog { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.cgpa-badge {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  color: #34d399; background: rgba(16,185,129,.1);
+  padding: 3px 9px; border-radius: 6px; flex-shrink: 0;
+}
+
+.activity-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid rgba(30,58,95,.3);
+  font-size: 12px;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--violet); margin-top: 4px; flex-shrink: 0;
+}
+.activity-text { flex: 1; color: var(--text); line-height: 1.5; }
+.activity-text strong { color: #fff; }
+.activity-time { color: var(--dim); font-size: 11px; white-space: nowrap; }
+
+.module-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  margin-bottom: 28px;
+}
+.module-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  text-align: center; cursor: pointer; transition: all .25s;
+  text-decoration: none; display: block;
+}
+.module-card:hover {
+  border-color: var(--border-2);
+  transform: translateY(-3px); box-shadow: var(--shadow);
+}
+.module-card i { font-size: 28px; margin-bottom: 10px; }
+.module-card h4 { font-size: 13px; font-weight: 600; color: #fff; }
+.module-card p  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+</style>
+</head>
+<body>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text">
+      <h2>FAST-NUCES ERP</h2>
+      <p>University Management System</p>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item active" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+
+  <div class="sidebar-footer">
+    <strong>Group 13 — Spring 2025</strong>
+    Ibrahim Khatak · Malik Sanaullah
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Dashboard</h1>
+      <p id="dateStr">Loading...</p>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-badge"><i class="fa fa-circle text-green" style="font-size:8px;margin-right:6px"></i>Live</span>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Hero -->
+    <div class="hero-banner">
+      <div class="hero-content">
+        <h2>University ERP — Academic Portal</h2>
+        <p>National University of Computer & Emerging Sciences (FAST-NUCES) · Spring 2025</p>
+        <div class="hero-meta">
+          <div class="hero-meta-item"><div class="v" id="h-students">—</div><div class="l">Students</div></div>
+          <div class="hero-meta-item"><div class="v" id="h-courses">—</div><div class="l">Courses</div></div>
+          <div class="hero-meta-item"><div class="v" id="h-faculty">—</div><div class="l">Faculty</div></div>
+          <div class="hero-meta-item"><div class="v" id="h-depts">—</div><div class="l">Departments</div></div>
+        </div>
+      </div>
+      <div class="hero-icon">🏛️</div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid" id="stat-cards">
+      <div class="stat-card"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Module quick links -->
+    <div class="module-grid">
+      <a class="module-card" href="students.html"><i class="fa fa-user-graduate" style="color:#60a5fa"></i><h4>Students</h4><p>Manage & search</p></a>
+      <a class="module-card" href="courses.html"><i class="fa fa-book-open" style="color:#a78bfa"></i><h4>Courses</h4><p>Catalog & schedule</p></a>
+      <a class="module-card" href="library.html"><i class="fa fa-building-columns" style="color:#34d399"></i><h4>Library</h4><p>Books & issues</p></a>
+      <a class="module-card" href="finance.html"><i class="fa fa-coins" style="color:#fbbf24"></i><h4>Finance</h4><p>Fees & invoices</p></a>
+      <a class="module-card" href="transcript.html"><i class="fa fa-scroll" style="color:#22d3ee"></i><h4>Transcripts</h4><p>Academic records</p></a>
+      <a class="module-card" href="hostel.html"><i class="fa fa-bed" style="color:#fb923c"></i><h4>Hostel</h4><p>Rooms & allocation</p></a>
+      <a class="module-card" href="transport.html"><i class="fa fa-bus" style="color:#f87171"></i><h4>Transport</h4><p>Fleet & routes</p></a>
+      <div class="module-card" style="cursor:default"><i class="fa fa-shield-halved" style="color:#818cf8"></i><h4>Security</h4><p>Roles & audit logs</p></div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="grid-2 mb-20">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Student Status</h3><p>Distribution by enrollment status</p></div>
+        </div>
+        <div class="card-body chart-wrap">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Enrollments by Program</h3><p>Top 6 programs by student count</p></div>
+        </div>
+        <div class="card-body chart-wrap">
+          <canvas id="programChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="grid-2">
+      <!-- Top students -->
+      <div class="card">
+        <div class="card-header">
+          <div><h3>🏆 Top Students by CGPA</h3><p>Active students ranked by grade</p></div>
+        </div>
+        <div class="card-body" id="top-students-list">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Monthly enrollments -->
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Monthly Enrollments</h3><p>Last 12 months activity</p></div>
+        </div>
+        <div class="card-body chart-wrap">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:3000';
+
+// Date
+const now = new Date();
+document.getElementById('dateStr').textContent =
+  now.toLocaleDateString('en-PK', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+function toast(msg, type='info') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fa fa-${type==='success'?'check-circle':'info-circle'}"></i> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function countUp(el, target, duration=900) {
+  const start = Date.now();
+  const tick = () => {
+    const p = Math.min((Date.now()-start)/duration, 1);
+    el.textContent = Math.floor(p * target).toLocaleString();
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+const CHART_COLORS = ['#60a5fa','#a78bfa','#34d399','#fbbf24','#fb923c','#f87171','#22d3ee','#818cf8'];
+const chartDefaults = {
+  color: '#8892b0',
+  borderColor: '#1e3a5f',
+  plugins: { legend: { labels: { color:'#8892b0', boxWidth:12, font:{size:12} } } }
+};
+
+async function loadDashboard() {
+  try {
+    const res  = await fetch(`${API}/api/stats`);
+    const data = await res.json();
+    const c    = data.counts;
+
+    // Hero
+    countUp(document.getElementById('h-students'), c.students);
+    countUp(document.getElementById('h-courses'), c.courses);
+    countUp(document.getElementById('h-faculty'), c.instructors);
+    countUp(document.getElementById('h-depts'), c.departments);
+
+    // Stat cards
+    const statDefs = [
+      { icon:'user-graduate', cls:'ic-blue',   label:'Total Students',   val: c.students },
+      { icon:'user-tie',      cls:'ic-purple',  label:'Instructors',      val: c.instructors },
+      { icon:'book-open',     cls:'ic-teal',    label:'Courses',          val: c.courses },
+      { icon:'building',      cls:'ic-indigo',  label:'Departments',      val: c.departments },
+      { icon:'chalkboard',    cls:'ic-green',   label:'Active Sections',  val: c.sections },
+      { icon:'list-check',    cls:'ic-yellow',  label:'Enrollments',      val: c.enrollments },
+      { icon:'building-columns', cls:'ic-orange', label:'Library Books',  val: c.books },
+    ];
+    document.getElementById('stat-cards').innerHTML = statDefs.map(s => `
+      <div class="stat-card">
+        <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+        <div class="stat-value" data-target="${s.val}">0</div>
+        <div class="stat-label">${s.label}</div>
+      </div>`).join('');
+    document.querySelectorAll('.stat-value[data-target]').forEach(el =>
+      countUp(el, parseInt(el.dataset.target)));
+
+    // Status chart (doughnut)
+    const statusLabels = data.byStatus.map(x => x.status);
+    const statusData   = data.byStatus.map(x => x.cnt);
+    new Chart(document.getElementById('statusChart'), {
+      type: 'doughnut',
+      data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: CHART_COLORS, borderWidth: 0, hoverOffset: 6 }] },
+      options: { ...chartDefaults, cutout:'65%', plugins: { legend: { position:'bottom', labels:{ color:'#8892b0', boxWidth:12, padding:16 } } } }
+    });
+
+    // Program chart (horizontal bar)
+    new Chart(document.getElementById('programChart'), {
+      type: 'bar',
+      data: {
+        labels: data.byProgram.map(x => x.program_name.length > 18 ? x.program_name.slice(0,18)+'…' : x.program_name),
+        datasets: [{ data: data.byProgram.map(x => x.cnt),
+          backgroundColor: CHART_COLORS, borderRadius: 6, borderSkipped: false }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend:{ display:false } },
+        scales: {
+          x: { ticks:{ color:'#8892b0' }, grid:{ color:'rgba(30,58,95,.3)' } },
+          y: { ticks:{ color:'#8892b0', font:{size:11} }, grid:{ display:false } }
+        }
+      }
+    });
+
+    // Top students
+    const html = data.topStudents.map((s, i) => {
+      const rankClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      return `<div class="top-student-card">
+        <div class="rank ${rankClass}">${i+1}</div>
+        <div class="student-info">
+          <div class="name">${s.name}</div>
+          <div class="prog">${s.registration_no} · ${s.program_name}</div>
+        </div>
+        <div class="cgpa-badge">${parseFloat(s.cgpa).toFixed(2)}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('top-students-list').innerHTML = html || '<div class="empty-state"><p>No data</p></div>';
+
+    // Monthly chart (line)
+    new Chart(document.getElementById('monthlyChart'), {
+      type: 'line',
+      data: {
+        labels: data.monthlyEnrollments.map(x => x.mo),
+        datasets: [{
+          label: 'Enrollments',
+          data: data.monthlyEnrollments.map(x => x.cnt),
+          borderColor: '#7c3aed',
+          backgroundColor: 'rgba(124,58,237,.1)',
+          fill: true, tension: .4,
+          pointBackgroundColor: '#7c3aed', pointRadius: 4
+        }]
+      },
+      options: {
+        plugins: { legend:{ display:false } },
+        scales: {
+          x: { ticks:{ color:'#8892b0', font:{size:11} }, grid:{ color:'rgba(30,58,95,.3)' } },
+          y: { ticks:{ color:'#8892b0' }, grid:{ color:'rgba(30,58,95,.3)' }, beginAtZero:true }
+        }
+      }
+    });
+
+  } catch(e) {
+    toast('Cannot connect to server. Make sure node server.js is running.', 'error');
+    document.getElementById('stat-cards').innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <i class="fa fa-plug"></i><h3>Database Offline</h3><p>Run <code>node server.js</code> and refresh</p></div>`;
+  }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
