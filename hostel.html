@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hostel — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+.hostel-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding:20px;
+  transition: all .25s;
+}
+.hostel-card:hover { border-color: var(--border-2); box-shadow: var(--shadow); }
+.hostel-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.hostel-name { font-size:15px; font-weight:700; color:#fff; }
+.hostel-type-badge {
+  font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; letter-spacing:.5px;
+}
+.type-male   { background:rgba(37,99,235,.15); color:#60a5fa; }
+.type-female { background:rgba(236,72,153,.15); color:#f472b6; }
+.type-mixed  { background:rgba(124,58,237,.15); color:#a78bfa; }
+
+.occ-bar-wrap { background: var(--border); border-radius:6px; height:8px; overflow:hidden; margin:8px 0; }
+.occ-bar { height:100%; border-radius:6px; transition: width .6s ease; }
+.occ-high   { background: linear-gradient(90deg,#ef4444,#f87171); }
+.occ-medium { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.occ-low    { background: linear-gradient(90deg,#10b981,#34d399); }
+
+.complaint-row { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid rgba(30,58,95,.3); font-size:12px; }
+.complaint-row:last-child { border-bottom:none; }
+.complaint-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.dot-open       { background:#f87171; }
+.dot-inprogress { background:#fbbf24; }
+.dot-resolved   { background:#34d399; }
+.dot-closed     { background:var(--dim); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item active" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Hostel</h1><p>Room occupancy, allocations and complaints</p></div>
+    <div class="topbar-right"><span id="hostel-badge" class="topbar-badge">Loading…</span></div>
+  </header>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px" id="hostel-stats">
+      <div class="stat-card"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Hostel cards + chart row -->
+    <div class="grid-2 mb-20">
+      <!-- Hostel occupancy cards -->
+      <div class="card">
+        <div class="card-header"><div><h3>🏠 Hostel Occupancy</h3><p>Real-time bed availability per hostel</p></div></div>
+        <div class="card-body" id="hostel-cards-list">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Occupancy chart -->
+      <div class="card">
+        <div class="card-header"><div><h3>Bed Distribution</h3><p>Available vs Occupied vs Reserved</p></div></div>
+        <div class="card-body chart-wrap"><canvas id="occupancyChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Complaints table -->
+    <div class="card">
+      <div class="card-header">
+        <div><h3>🔔 Complaints Register</h3><p>Recent hostel complaints and their status</p></div>
+        <select id="filter-complaint-status" class="filter" onchange="filterComplaints()" style="font-size:12px;padding:6px 10px">
+          <option value="">All Statuses</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Student</th><th>Type</th><th>Description</th><th>Date</th><th>Status</th>
+          </tr></thead>
+          <tbody id="complaints-tbody">
+            <tr><td colspan="6"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let allComplaints = [];
+
+const cStatusColor = { 'Open':'badge-red','In Progress':'badge-yellow','Resolved':'badge-green','Closed':'badge-gray' };
+const cDotClass    = { 'Open':'dot-open','In Progress':'dot-inprogress','Resolved':'dot-resolved','Closed':'dot-closed' };
+
+async function loadHostel() {
+  try {
+    const data = await fetch(`${API}/api/hostel/overview`).then(r=>r.json());
+    const { hostels, complaints } = data;
+    allComplaints = complaints;
+
+    const totalBeds = hostels.reduce((s,h)=>s+Number(h.total_beds||0),0);
+    const totalAvail= hostels.reduce((s,h)=>s+Number(h.available||0),0);
+    const totalOcc  = hostels.reduce((s,h)=>s+Number(h.occupied||0),0);
+    const occPct    = totalBeds>0?Math.round((totalOcc/totalBeds)*100):0;
+
+    document.getElementById('hostel-badge').textContent = `${hostels.length} Hostels`;
+    document.getElementById('hostel-stats').innerHTML = [
+      { icon:'building',       cls:'ic-blue',   label:'Hostels',         val: hostels.length },
+      { icon:'bed',            cls:'ic-purple', label:'Total Beds',      val: totalBeds },
+      { icon:'circle-check',   cls:'ic-green',  label:'Available Beds',  val: totalAvail },
+      { icon:'person',         cls:'ic-yellow', label:'Occupancy %',     val: occPct+'%' },
+    ].map(s=>`<div class="stat-card">
+      <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div></div>`).join('');
+
+    // Hostel cards
+    document.getElementById('hostel-cards-list').innerHTML = hostels.map(h => {
+      const beds = Number(h.total_beds||0);
+      const occ  = Number(h.occupied||0);
+      const avail= Number(h.available||0);
+      const res  = Number(h.reserved||0);
+      const pct  = beds>0?Math.round((occ/beds)*100):0;
+      const barCls= pct>=85?'occ-high':pct>=60?'occ-medium':'occ-low';
+      const typeClass = h.hostel_type==='Male'?'type-male':h.hostel_type==='Female'?'type-female':'type-mixed';
+      return `<div class="hostel-card" style="margin-bottom:14px">
+        <div class="hostel-card-header">
+          <span class="hostel-name">${h.hostel_name}</span>
+          <span class="hostel-type-badge ${typeClass}">${h.hostel_type}</span>
+        </div>
+        <div class="occ-bar-wrap"><div class="occ-bar ${barCls}" style="width:${pct}%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)">
+          <span>${pct}% occupied</span><span>${occ}/${beds} beds</span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <span class="badge badge-green">${avail} Free</span>
+          <span class="badge badge-red">${occ} Occupied</span>
+          ${res>0?`<span class="badge badge-yellow">${res} Reserved</span>`:''}
+        </div>
+      </div>`;
+    }).join('');
+
+    // Chart
+    new Chart(document.getElementById('occupancyChart'),{
+      type:'bar',
+      data:{
+        labels: hostels.map(h=>h.hostel_name),
+        datasets:[
+          { label:'Available', data:hostels.map(h=>h.available||0), backgroundColor:'rgba(16,185,129,.6)', borderRadius:4 },
+          { label:'Occupied',  data:hostels.map(h=>h.occupied||0),  backgroundColor:'rgba(239,68,68,.6)',  borderRadius:4 },
+          { label:'Reserved',  data:hostels.map(h=>h.reserved||0),  backgroundColor:'rgba(245,158,11,.6)', borderRadius:4 },
+        ]
+      },
+      options:{
+        plugins:{ legend:{ labels:{ color:'#8892b0', boxWidth:12, font:{size:11} } } },
+        scales:{
+          x:{ stacked:true, ticks:{ color:'#8892b0', font:{size:11} }, grid:{ display:false } },
+          y:{ stacked:true, ticks:{ color:'#8892b0' }, grid:{ color:'rgba(30,58,95,.3)' }, beginAtZero:true }
+        }
+      }
+    });
+
+    renderComplaints(complaints);
+  } catch(e) {
+    document.getElementById('hostel-stats').innerHTML = `<div class="stat-card"><div class="empty-state"><i class="fa fa-plug"></i><h3>Cannot connect</h3></div></div>`;
+  }
+}
+
+function filterComplaints() {
+  const s = document.getElementById('filter-complaint-status').value;
+  renderComplaints(s ? allComplaints.filter(c=>c.status===s) : allComplaints);
+}
+
+function renderComplaints(list) {
+  document.getElementById('complaints-tbody').innerHTML = list.length ? list.map(c => `
+    <tr>
+      <td class="text-mono text-sm">#${c.complaint_id}</td>
+      <td style="font-weight:600;color:#fff;font-size:13px">${c.student_name}</td>
+      <td class="text-sm">${c.complaint_type||'General'}</td>
+      <td style="font-size:12px;max-width:240px">${(c.description||'').slice(0,80)}${c.description?.length>80?'…':''}</td>
+      <td class="text-mono text-sm">${c.complaint_date||'—'}</td>
+      <td><span class="badge ${cStatusColor[c.status]||'badge-gray'}">${c.status}</span></td>
+    </tr>`).join('') :
+    `<tr><td colspan="6"><div class="empty-state"><i class="fa fa-inbox"></i><h3>No complaints found</h3></div></td></tr>`;
+}
+
+loadHostel();
+</script>
+</body>
+</html>
