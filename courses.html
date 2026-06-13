@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Courses — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+.view-toggle { display:flex; gap:6px; }
+.view-btn {
+  padding: 7px 14px; border-radius: var(--radius-sm); font-size:12px; font-weight:600;
+  border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor:pointer; transition: all .2s;
+}
+.view-btn.active { background: var(--grad-soft); color: var(--violet); border-color: rgba(124,58,237,.3); }
+
+/* Course cards */
+.course-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px; }
+.course-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding:20px; transition: all .25s; cursor:pointer;
+}
+.course-card:hover { border-color: var(--border-2); transform:translateY(-2px); box-shadow: var(--shadow); }
+.course-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.course-code { font-family: var(--font-mono); font-size:12px; font-weight:700; color: var(--violet); background: rgba(124,58,237,.12); padding:3px 8px; border-radius:6px; }
+.course-credits { font-family: var(--font-mono); font-size:11px; color: var(--muted); background: var(--border); padding:3px 8px; border-radius:6px; }
+.course-title { font-size:14px; font-weight:700; color:#fff; margin-bottom:6px; line-height:1.4; }
+.course-dept  { font-size:11px; color: var(--muted); margin-bottom:12px; }
+.course-stats { display:flex; gap:12px; }
+.course-stat  { text-align:center; }
+.course-stat .v { font-size:16px; font-weight:800; font-family: var(--font-mono); color:#fff; }
+.course-stat .l { font-size:10px; color: var(--dim); text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
+
+/* Schedule view */
+.schedule-day { margin-bottom:24px; }
+.day-header {
+  font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+  color: var(--dim); padding:8px 0; border-bottom:1px solid var(--border); margin-bottom:10px;
+}
+.schedule-row {
+  display:grid; grid-template-columns: 120px 1fr 180px 140px 80px;
+  gap:12px; align-items:center; padding:12px 16px;
+  background: var(--card); border:1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom:8px; transition: border-color .2s;
+}
+.schedule-row:hover { border-color: var(--border-2); }
+.sch-time { font-family: var(--font-mono); font-size:12px; color: var(--violet); font-weight:600; }
+.sch-course { font-size:13px; font-weight:600; color:#fff; }
+.sch-sub { font-size:11px; color: var(--muted); margin-top:2px; }
+.seats-pill {
+  font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px;
+  font-family: var(--font-mono);
+}
+.seats-ok   { background:rgba(16,185,129,.12); color:#34d399; }
+.seats-low  { background:rgba(245,158,11,.12); color:#fbbf24; }
+.seats-full { background:rgba(239,68,68,.12);  color:#f87171; }
+
+/* Detail modal */
+.outcome-item {
+  display:flex; align-items:flex-start; gap:10px; padding:8px 0;
+  border-bottom:1px solid rgba(30,58,95,.3); font-size:13px; color: var(--text);
+}
+.outcome-item:last-child { border-bottom:none; }
+.outcome-dot { width:6px; height:6px; border-radius:50%; background: var(--violet); margin-top:6px; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item active" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Courses</h1>
+      <p>Course catalog, sections and class schedule</p>
+    </div>
+    <div class="topbar-right">
+      <span id="course-count" class="topbar-badge">Loading…</span>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px" id="course-stats">
+      <div class="stat-card"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px">
+      <button class="tab-top active" id="tab-catalog" onclick="switchMainTab('catalog')">📚 Course Catalog</button>
+      <button class="tab-top" id="tab-schedule" onclick="switchMainTab('schedule')">🗓 Class Schedule</button>
+    </div>
+
+    <!-- ── CATALOG TAB ── -->
+    <div id="pane-catalog">
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fa fa-search"></i>
+          <input id="course-search" type="text" placeholder="Search by title or code…"/>
+        </div>
+        <select id="filter-dept" class="filter"><option value="">All Departments</option></select>
+        <button class="btn btn-ghost btn-sm" onclick="clearCourseFilters()"><i class="fa fa-rotate-left"></i> Clear</button>
+        <div class="view-toggle" style="margin-left:auto">
+          <button class="view-btn active" id="vbtn-cards" onclick="setView('cards')"><i class="fa fa-grip"></i> Cards</button>
+          <button class="view-btn" id="vbtn-table" onclick="setView('table')"><i class="fa fa-list"></i> Table</button>
+        </div>
+      </div>
+
+      <!-- Cards view -->
+      <div id="view-cards" class="course-grid" style="margin-bottom:24px"></div>
+
+      <!-- Table view -->
+      <div id="view-table" class="card hidden">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th><th>Course Title</th><th>Department</th>
+                <th>Credits</th><th>Sections</th><th>Enrolled</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="course-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCHEDULE TAB ── -->
+    <div id="pane-schedule" class="hidden">
+      <div class="toolbar">
+        <select id="filter-semester" class="filter" onchange="loadSchedule()">
+          <option value="">All Semesters</option>
+        </select>
+      </div>
+      <div id="schedule-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Course detail modal -->
+<div id="course-modal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h3 id="modal-course-title">Course Detail</h3>
+      <button class="btn-close-modal" onclick="closeCourseModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-course-body" style="max-height:520px;overflow-y:auto"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeCourseModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<style>
+.tab-top {
+  padding:12px 20px; font-size:13px; font-weight:600; color: var(--muted);
+  background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition: all .2s;
+}
+.tab-top.active { color: var(--violet); border-bottom-color: var(--violet); }
+</style>
+
+<script>
+const API = 'http://localhost:3000';
+let allCourses = [], filteredCourses = [], currentView = 'cards';
+
+function toast(msg, type='info') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fa fa-${type==='error'?'circle-exclamation':'info-circle'}"></i> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+function switchMainTab(tab) {
+  ['catalog','schedule'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t===tab);
+    document.getElementById(`pane-${t}`).classList.toggle('hidden', t!==tab);
+  });
+  if (tab==='schedule') loadSchedule();
+}
+
+async function loadCourses() {
+  try {
+    const [courses, depts] = await Promise.all([
+      fetch(`${API}/api/courses`).then(r=>r.json()),
+      fetch(`${API}/api/departments`).then(r=>r.json())
+    ]);
+    allCourses = courses; filteredCourses = courses;
+
+    // dept dropdown
+    const sel = document.getElementById('filter-dept');
+    depts.forEach(d => sel.innerHTML += `<option value="${d.department_id}">${d.department_name}</option>`);
+
+    renderStats();
+    renderCourses();
+    document.getElementById('course-count').textContent = `${courses.length} Courses`;
+  } catch(e) {
+    toast('Cannot connect to server.', 'error');
+  }
+}
+
+function renderStats() {
+  const totalSec = allCourses.reduce((s,c)=>s+Number(c.total_sections),0);
+  const totalEnr = allCourses.reduce((s,c)=>s+Number(c.total_enrolled),0);
+  const depts = new Set(allCourses.map(c=>c.department_name)).size;
+  document.getElementById('course-stats').innerHTML = [
+    { icon:'book-open',    cls:'ic-blue',   label:'Total Courses',  val: allCourses.length },
+    { icon:'chalkboard',   cls:'ic-purple', label:'Total Sections', val: totalSec },
+    { icon:'users',        cls:'ic-green',  label:'Enrollments',    val: totalEnr },
+    { icon:'building',     cls:'ic-teal',   label:'Departments',    val: depts },
+  ].map(s=>`<div class="stat-card">
+    <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+    <div class="stat-value">${s.val}</div>
+    <div class="stat-label">${s.label}</div></div>`).join('');
+}
+
+function applyFilters() {
+  const s = document.getElementById('course-search').value.toLowerCase();
+  const d = document.getElementById('filter-dept').value;
+  filteredCourses = allCourses.filter(c =>
+    (!s || c.course_title.toLowerCase().includes(s) || c.course_code.toLowerCase().includes(s)) &&
+    (!d || String(c.department_id)===d || c.department_name===d)
+  );
+  renderCourses();
+}
+function clearCourseFilters() {
+  document.getElementById('course-search').value='';
+  document.getElementById('filter-dept').value='';
+  applyFilters();
+}
+document.getElementById('course-search').addEventListener('input', applyFilters);
+document.getElementById('filter-dept').addEventListener('change', applyFilters);
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('vbtn-cards').classList.toggle('active', v==='cards');
+  document.getElementById('vbtn-table').classList.toggle('active', v==='table');
+  document.getElementById('view-cards').classList.toggle('hidden', v!=='cards');
+  document.getElementById('view-table').classList.toggle('hidden', v!=='table');
+}
+
+const DEPT_COLORS = ['#60a5fa','#a78bfa','#34d399','#fbbf24','#fb923c','#f87171','#22d3ee','#818cf8'];
+const deptColorMap = {};
+let dcIdx = 0;
+function deptColor(d) {
+  if (!deptColorMap[d]) deptColorMap[d] = DEPT_COLORS[dcIdx++ % DEPT_COLORS.length];
+  return deptColorMap[d];
+}
+
+function renderCourses() {
+  const clr = deptColor;
+
+  // Cards
+  document.getElementById('view-cards').innerHTML = filteredCourses.length ? filteredCourses.map(c => `
+    <div class="course-card" onclick="viewCourse(${c.course_id})">
+      <div class="course-card-header">
+        <span class="course-code">${c.course_code}</span>
+        <span class="course-credits">${c.credit_hours} cr</span>
+      </div>
+      <div class="course-title">${c.course_title}</div>
+      <div class="course-dept" style="color:${clr(c.department_name)}"><i class="fa fa-building" style="margin-right:4px"></i>${c.department_name}</div>
+      <div class="course-stats">
+        <div class="course-stat"><div class="v">${c.total_sections}</div><div class="l">Sections</div></div>
+        <div class="course-stat"><div class="v">${c.total_enrolled}</div><div class="l">Enrolled</div></div>
+        <div class="course-stat"><div class="v">${c.credit_hours}</div><div class="l">Credits</div></div>
+      </div>
+    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fa fa-book-open"></i><h3>No courses found</h3><p>Try adjusting your filters</p></div>`;
+
+  // Table
+  document.getElementById('course-tbody').innerHTML = filteredCourses.length ? filteredCourses.map(c => `
+    <tr>
+      <td><span class="text-mono" style="color:var(--violet)">${c.course_code}</span></td>
+      <td style="font-weight:600;color:#fff">${c.course_title}</td>
+      <td class="text-sm" style="color:${clr(c.department_name)}">${c.department_name}</td>
+      <td class="text-mono text-sm" style="text-align:center">${c.credit_hours}</td>
+      <td class="text-mono text-sm" style="text-align:center">${c.total_sections}</td>
+      <td class="text-mono text-sm" style="text-align:center">${c.total_enrolled}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="viewCourse(${c.course_id})"><i class="fa fa-eye"></i></button></td>
+    </tr>`).join('') : `<tr><td colspan="7"><div class="empty-state"><i class="fa fa-search"></i><h3>No results</h3></div></td></tr>`;
+}
+
+async function loadSchedule() {
+  const semId = document.getElementById('filter-semester').value;
+  const wrap = document.getElementById('schedule-wrap');
+  wrap.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+  try {
+    const [sections, semesters] = await Promise.all([
+      fetch(`${API}/api/sections${semId?'?semester_id='+semId:''}`).then(r=>r.json()),
+      fetch(`${API}/api/semesters`).then(r=>r.json())
+    ]);
+
+    // populate semester dropdown once
+    const sel = document.getElementById('filter-semester');
+    if (sel.options.length === 1) {
+      semesters.forEach(s => sel.innerHTML += `<option value="${s.semester_id}">${s.semester_name} ${s.session_name}</option>`);
+    }
+
+    if (!sections.length) { wrap.innerHTML = `<div class="empty-state"><i class="fa fa-calendar-xmark"></i><h3>No sections found</h3></div>`; return; }
+
+    const DAY_ORDER = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const grouped = {};
+    sections.forEach(s => {
+      const day = s.day_of_week || 'Unscheduled';
+      (grouped[day] = grouped[day]||[]).push(s);
+    });
+
+    wrap.innerHTML = DAY_ORDER.concat(['Unscheduled']).filter(d=>grouped[d]).map(day => `
+      <div class="schedule-day">
+        <div class="day-header">📅 ${day}</div>
+        ${grouped[day].map(s => {
+          const avail = Number(s.seats_available);
+          const seatsClass = avail<=0?'seats-full':avail<=5?'seats-low':'seats-ok';
+          const seatsLabel = avail<=0?'Full':`${avail} open`;
+          return `<div class="schedule-row">
+            <div class="sch-time">${s.start_time?.slice(0,5)||'—'} – ${s.end_time?.slice(0,5)||'—'}</div>
+            <div>
+              <div class="sch-course">${s.course_code} · ${s.section_name}</div>
+              <div class="sch-sub">${s.course_title}</div>
+            </div>
+            <div>
+              <div class="sch-course" style="font-size:12px">${s.instructor_name||'TBA'}</div>
+              <div class="sch-sub">${s.building_name||''} ${s.room_number||''}</div>
+            </div>
+            <div class="sch-sub">${s.semester_name} ${s.session_name}</div>
+            <div><span class="seats-pill ${seatsClass}">${seatsLabel}</span></div>
+          </div>`;
+        }).join('')}
+      </div>`).join('');
+  } catch(e) { wrap.innerHTML = `<div class="empty-state"><i class="fa fa-plug"></i><h3>Cannot load schedule</h3></div>`; }
+}
+
+async function viewCourse(id) {
+  const course = allCourses.find(c=>c.course_id===id);
+  if (!course) return;
+  document.getElementById('modal-course-title').textContent = `${course.course_code} — ${course.course_title}`;
+  document.getElementById('modal-course-body').innerHTML = `
+    <div class="form-grid-2" style="margin-bottom:20px">
+      <div class="info-list">
+        <div class="info-item"><span class="info-label">Code</span><span class="info-value text-mono" style="color:var(--violet)">${course.course_code}</span></div>
+        <div class="info-item"><span class="info-label">Credits</span><span class="info-value text-mono">${course.credit_hours}</span></div>
+        <div class="info-item"><span class="info-label">Department</span><span class="info-value">${course.department_name}</span></div>
+      </div>
+      <div class="info-list">
+        <div class="info-item"><span class="info-label">Sections</span><span class="info-value text-mono">${course.total_sections}</span></div>
+        <div class="info-item"><span class="info-label">Enrolled</span><span class="info-value text-mono">${course.total_enrolled}</span></div>
+      </div>
+    </div>
+    ${course.description ? `<div style="margin-bottom:16px"><div class="info-label" style="margin-bottom:6px">Description</div><p style="font-size:13px;color:var(--text);line-height:1.6">${course.description}</p></div>` : ''}`;
+  document.getElementById('course-modal').classList.remove('hidden');
+}
+function closeCourseModal() { document.getElementById('course-modal').classList.add('hidden'); }
+document.getElementById('course-modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeCourseModal(); });
+
+loadCourses();
+</script>
+</body>
+</html>
