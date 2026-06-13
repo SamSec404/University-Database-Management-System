@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Transcripts — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+.transcript-header-card {
+  background: var(--grad); border-radius: var(--radius); padding:28px 32px;
+  margin-bottom:24px; display:flex; align-items:center; justify-content:space-between;
+  position:relative; overflow:hidden;
+}
+.transcript-header-card::before {
+  content:''; position:absolute; top:-40px; right:-40px; width:220px; height:220px;
+  background:rgba(255,255,255,.06); border-radius:50%;
+}
+.th-info { position:relative; z-index:1; }
+.th-info h2 { font-size:20px; font-weight:800; color:#fff; }
+.th-info p  { font-size:12px; color:rgba(255,255,255,.7); margin-top:4px; }
+.th-meta { display:flex; gap:24px; margin-top:16px; }
+.th-meta-item .v { font-size:22px; font-weight:800; color:#fff; font-family:var(--font-mono); }
+.th-meta-item .l { font-size:10px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:1px; }
+.th-icon { font-size:60px; opacity:.12; position:relative; z-index:1; }
+
+.semester-block { margin-bottom:24px; }
+.semester-title {
+  font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+  color: var(--violet); padding:8px 0; border-bottom:1px solid rgba(124,58,237,.2); margin-bottom:10px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.semester-gpa-pill {
+  font-family:var(--font-mono); font-size:12px; font-weight:700;
+  background:rgba(124,58,237,.12); color:var(--violet); padding:3px 10px; border-radius:20px;
+}
+
+.search-student-bar {
+  display:flex; gap:12px; margin-bottom:28px; align-items:center;
+}
+.search-student-bar .search-box { max-width:none; flex:1; }
+.student-suggestion-list {
+  position:absolute; top:100%; left:0; right:0; z-index:100;
+  background: var(--surface); border:1px solid var(--border); border-radius: var(--radius-sm);
+  max-height:220px; overflow-y:auto; box-shadow: var(--shadow);
+}
+.suggestion-item {
+  padding:10px 14px; cursor:pointer; font-size:13px;
+  border-bottom:1px solid var(--border); display:flex; gap:10px; align-items:center;
+  transition: background .15s;
+}
+.suggestion-item:last-child { border-bottom:none; }
+.suggestion-item:hover { background: var(--card-hover); }
+.suggestion-item .reg { font-family:var(--font-mono); font-size:11px; color: var(--muted); }
+
+/* Print */
+@media print {
+  .sidebar, .topbar, .search-student-bar, #toast-container { display:none!important; }
+  .main { margin-left:0!important; }
+  .content { padding:0!important; }
+  body { background:#fff; color:#000; }
+  .card, .transcript-header-card { background:#fff!important; border:1px solid #ccc!important; }
+  .stat-card { background:#f5f5f5!important; border:1px solid #ddd!important; }
+  .semester-title { color:#333!important; }
+  td, th { color:#000!important; }
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item active" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Transcripts</h1>
+      <p>View complete academic history and grade records</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" onclick="window.print()" id="print-btn" style="display:none">
+        <i class="fa fa-print"></i> Print
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Search bar -->
+    <div class="search-student-bar">
+      <div class="search-box" style="position:relative; flex:1; max-width:480px">
+        <i class="fa fa-search"></i>
+        <input id="student-search" type="text" placeholder="Search student by name or registration number…" autocomplete="off"/>
+        <div id="suggestions" class="student-suggestion-list hidden"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="clearTranscript()"><i class="fa fa-rotate-left"></i> Clear</button>
+    </div>
+
+    <!-- Placeholder -->
+    <div id="transcript-placeholder" class="empty-state">
+      <i class="fa fa-scroll"></i>
+      <h3>No Transcript Loaded</h3>
+      <p>Search for a student above to view their academic transcript</p>
+    </div>
+
+    <!-- Transcript content -->
+    <div id="transcript-content" class="hidden">
+      <!-- Student header card -->
+      <div class="transcript-header-card" id="tc-header">
+        <div class="th-info">
+          <h2 id="tc-name">Student Name</h2>
+          <p id="tc-sub">Registration No · Program · Department</p>
+          <div class="th-meta">
+            <div class="th-meta-item"><div class="v" id="tc-cgpa">0.00</div><div class="l">Cumulative GPA</div></div>
+            <div class="th-meta-item"><div class="v" id="tc-credits">0</div><div class="l">Credits Earned</div></div>
+            <div class="th-meta-item"><div class="v" id="tc-courses">0</div><div class="l">Courses</div></div>
+            <div class="th-meta-item"><div class="v" id="tc-status">—</div><div class="l">Status</div></div>
+          </div>
+        </div>
+        <div class="th-icon">📜</div>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px" id="tc-stats"></div>
+
+      <!-- Semester-wise records -->
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Academic Record</h3><p>Semester-wise course history</p></div>
+        </div>
+        <div style="padding:20px" id="tc-semesters"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let allStudents = [], searchTimer;
+
+function toast(msg, type='info') {
+  const t = document.createElement('div'); t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fa fa-info-circle"></i> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+async function loadStudentList() {
+  try { allStudents = await fetch(`${API}/api/students`).then(r=>r.json()); }
+  catch(e) { toast('Cannot connect to server.','error'); }
+}
+
+const searchInput  = document.getElementById('student-search');
+const suggestionBox= document.getElementById('suggestions');
+
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    const q = searchInput.value.toLowerCase().trim();
+    if (!q) { suggestionBox.classList.add('hidden'); return; }
+    const matches = allStudents.filter(s =>
+      s.full_name.toLowerCase().includes(q) ||
+      s.registration_no.toLowerCase().includes(q)
+    ).slice(0,8);
+    if (!matches.length) { suggestionBox.classList.add('hidden'); return; }
+    suggestionBox.innerHTML = matches.map(s => `
+      <div class="suggestion-item" onclick="loadTranscript(${s.student_id},'${s.full_name}')">
+        <div style="flex:1">
+          <div style="font-weight:600;color:#fff">${s.full_name}</div>
+          <div class="reg">${s.registration_no} · ${s.program_name}</div>
+        </div>
+        <span class="badge badge-${s.status==='Active'?'green':'gray'}">${s.status}</span>
+      </div>`).join('');
+    suggestionBox.classList.remove('hidden');
+  }, 200);
+});
+document.addEventListener('click', e => { if (!suggestionBox.contains(e.target) && e.target!==searchInput) suggestionBox.classList.add('hidden'); });
+
+function gradeClass(g) {
+  if (!g||g==='—') return 'grade-na';
+  if (g[0]==='A') return 'grade-A';
+  if (g[0]==='B') return 'grade-B';
+  if (g[0]==='C') return 'grade-C';
+  if (g[0]==='D') return 'grade-D';
+  return 'grade-F';
+}
+
+const GRADE_POINTS = {'A+':4,'A':4,'A-':3.67,'B+':3.33,'B':3,'B-':2.67,'C+':2.33,'C':2,'C-':1.67,'D':1,'F':0};
+function gradeToPoints(g) { return GRADE_POINTS[g] ?? null; }
+
+async function loadTranscript(id, name) {
+  suggestionBox.classList.add('hidden');
+  searchInput.value = name;
+  document.getElementById('transcript-placeholder').classList.add('hidden');
+  document.getElementById('transcript-content').classList.remove('hidden');
+  document.getElementById('tc-semesters').innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  try {
+    const [student, enrollments] = await Promise.all([
+      fetch(`${API}/api/students/${id}`).then(r=>r.json()),
+      fetch(`${API}/api/enrollments?student_id=${id}`).then(r=>r.json())
+    ]);
+
+    // Header
+    document.getElementById('tc-name').textContent = student.full_name;
+    document.getElementById('tc-sub').textContent  = `${student.registration_no} · ${student.program_name} · ${student.department_name}`;
+    document.getElementById('tc-cgpa').textContent = parseFloat(student.cgpa||0).toFixed(2);
+    document.getElementById('tc-status').textContent = student.status;
+
+    const completed = enrollments.filter(e=>e.grade&&e.grade!=='—');
+    const totalCr = completed.reduce((s,e)=>s+Number(e.credit_hours||0),0);
+    document.getElementById('tc-credits').textContent = totalCr;
+    document.getElementById('tc-courses').textContent = enrollments.length;
+
+    // Grade distribution
+    const gradeMap = {};
+    completed.forEach(e=>{ const g=e.grade[0]; gradeMap[g]=(gradeMap[g]||0)+1; });
+    const aCount = gradeMap['A']||0, bCount = gradeMap['B']||0, cCount = gradeMap['C']||0, fCount = gradeMap['F']||0;
+
+    document.getElementById('tc-stats').innerHTML = [
+      { icon:'graduation-cap', cls:'ic-green',  label:'A Grades',  val: aCount },
+      { icon:'star',           cls:'ic-blue',   label:'B Grades',  val: bCount },
+      { icon:'circle-half-stroke',cls:'ic-yellow',label:'C Grades',val: cCount },
+      { icon:'circle-exclamation', cls:'ic-red', label:'F / Fail', val: fCount },
+    ].map(s=>`<div class="stat-card">
+      <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div></div>`).join('');
+
+    // Group by semester
+    const semMap = {};
+    enrollments.forEach(e => {
+      const key = `${e.session_name} — ${e.semester_name}`;
+      (semMap[key] = semMap[key]||[]).push(e);
+    });
+
+    if (!Object.keys(semMap).length) {
+      document.getElementById('tc-semesters').innerHTML = `<div class="empty-state"><i class="fa fa-inbox"></i><h3>No Enrollment Records</h3></div>`;
+      return;
+    }
+
+    document.getElementById('tc-semesters').innerHTML = Object.entries(semMap).map(([sem, rows]) => {
+      const semCr = rows.filter(r=>r.grade).reduce((s,r)=>s+Number(r.credit_hours||0),0);
+      const qPts  = rows.filter(r=>r.grade&&gradeToPoints(r.grade)!==null)
+                        .reduce((s,r)=>s+gradeToPoints(r.grade)*Number(r.credit_hours||0),0);
+      const semGPA = semCr>0 ? (qPts/semCr).toFixed(2) : '—';
+      return `<div class="semester-block">
+        <div class="semester-title">
+          <span>${sem}</span>
+          <span class="semester-gpa-pill">Semester GPA: ${semGPA}</span>
+        </div>
+        <table style="width:100%">
+          <thead><tr>
+            <th>Code</th><th>Course Title</th><th>Credits</th><th>Grade</th><th>Points</th><th>Quality Pts</th>
+          </tr></thead>
+          <tbody>
+          ${rows.map(r => {
+            const gp   = gradeToPoints(r.grade);
+            const qp   = gp!==null ? (gp*Number(r.credit_hours||0)).toFixed(2) : '—';
+            return `<tr>
+              <td class="text-mono" style="color:var(--violet)">${r.course_code}</td>
+              <td style="font-size:13px">${r.course_title}</td>
+              <td class="text-mono text-sm" style="text-align:center">${r.credit_hours}</td>
+              <td><span class="grade-pill ${gradeClass(r.grade)}">${r.grade||'—'}</span></td>
+              <td class="text-mono text-sm" style="text-align:center">${gp??'—'}</td>
+              <td class="text-mono text-sm" style="text-align:center">${qp}</td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    }).join('');
+
+    document.getElementById('print-btn').style.display='flex';
+  } catch(e) {
+    document.getElementById('tc-semesters').innerHTML=`<div class="empty-state"><i class="fa fa-triangle-exclamation"></i><h3>Error loading transcript</h3></div>`;
+  }
+}
+
+function clearTranscript() {
+  searchInput.value='';
+  document.getElementById('transcript-placeholder').classList.remove('hidden');
+  document.getElementById('transcript-content').classList.add('hidden');
+  document.getElementById('print-btn').style.display='none';
+}
+
+// Auto-load from query param e.g. transcript.html?id=1
+const urlId = new URLSearchParams(location.search).get('id');
+
+loadStudentList().then(() => {
+  if (urlId) {
+    const s = allStudents.find(st=>String(st.student_id)===urlId);
+    if (s) loadTranscript(s.student_id, s.full_name);
+  }
+});
+</script>
+</body>
+</html>
