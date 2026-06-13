@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Library — University ERP</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+.book-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding:18px; transition: all .25s; display:flex; flex-direction:column; gap:10px;
+}
+.book-card:hover { border-color: var(--border-2); transform:translateY(-2px); box-shadow: var(--shadow); }
+.book-icon {
+  width:44px; height:56px; border-radius:6px; background: var(--grad);
+  display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;
+}
+.book-title { font-size:13px; font-weight:700; color:#fff; line-height:1.4; }
+.book-author { font-size:11px; color: var(--muted); margin-top:2px; }
+.copy-pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+.copy-pill {
+  font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px;
+  font-family: var(--font-mono);
+}
+.avail  { background:rgba(16,185,129,.12); color:#34d399; }
+.issued { background:rgba(245,158,11,.12); color:#fbbf24; }
+.none   { background:rgba(239,68,68,.12);  color:#f87171; }
+
+.overdue-row { background: rgba(239,68,68,.05); }
+.overdue-row td:first-child { border-left:2px solid #f87171; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text"><h2>FAST-NUCES ERP</h2><p>University Management System</p></div>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Main</p>
+    <a class="nav-item" href="index.html"><i class="fa fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+    <a class="nav-item" href="courses.html"><i class="fa fa-book-open"></i> Courses</a>
+    <a class="nav-item" href="transcript.html"><i class="fa fa-scroll"></i> Transcripts</a>
+  </div>
+  <div class="sidebar-section">
+    <p class="sidebar-section-label">Modules</p>
+    <a class="nav-item active" href="library.html"><i class="fa fa-building-columns"></i> Library</a>
+    <a class="nav-item" href="finance.html"><i class="fa fa-coins"></i> Finance</a>
+    <a class="nav-item" href="hostel.html"><i class="fa fa-bed"></i> Hostel</a>
+    <a class="nav-item" href="transport.html"><i class="fa fa-bus"></i> Transport</a>
+  </div>
+  <div class="sidebar-footer"><strong>Group 13 — Spring 2025</strong>Ibrahim Khatak · Malik Sanaullah</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Library</h1><p>Book catalog, issuance and returns</p></div>
+    <div class="topbar-right"><span id="lib-badge" class="topbar-badge">Loading…</span></div>
+  </header>
+
+  <div class="content">
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px" id="lib-stats">
+      <div class="stat-card"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:20px">
+      <button class="tab-top active" id="tab-books"  onclick="switchTab('books')">📚 Books</button>
+      <button class="tab-top"        id="tab-issues" onclick="switchTab('issues')">📋 Issues & Returns</button>
+    </div>
+
+    <!-- Books pane -->
+    <div id="pane-books">
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fa fa-search"></i>
+          <input id="book-search" type="text" placeholder="Search by title or ISBN…"/>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('book-search').value='';renderBooks()">
+          <i class="fa fa-rotate-left"></i> Clear
+        </button>
+      </div>
+      <div id="books-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px"></div>
+    </div>
+
+    <!-- Issues pane -->
+    <div id="pane-issues" class="hidden">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Issue Log</h3><p>Active and returned book issues</p></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Book Title</th><th>Member</th><th>Reg No</th>
+              <th>Issue Date</th><th>Due Date</th><th>Status</th><th>Overdue</th>
+            </tr></thead>
+            <tbody id="issues-tbody">
+              <tr><td colspan="7"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<style>
+.tab-top { padding:12px 20px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s; }
+.tab-top.active { color:var(--violet);border-bottom-color:var(--violet); }
+</style>
+
+<script>
+const API = 'http://localhost:3000';
+let allBooks = [];
+
+function switchTab(tab) {
+  ['books','issues'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t===tab);
+    document.getElementById(`pane-${t}`).classList.toggle('hidden', t!==tab);
+  });
+  if (tab==='issues') loadIssues();
+}
+
+async function loadLibrary() {
+  try {
+    const books = await fetch(`${API}/api/library/books`).then(r=>r.json());
+    allBooks = books;
+
+    const total   = books.length;
+    const avail   = books.reduce((s,b)=>s+Number(b.available_copies||0),0);
+    const issued  = books.reduce((s,b)=>s+Number(b.issued_copies||0),0);
+    const totalCp = books.reduce((s,b)=>s+Number(b.total_copies||0),0);
+
+    document.getElementById('lib-badge').textContent = `${total} Books`;
+    document.getElementById('lib-stats').innerHTML = [
+      { icon:'book',           cls:'ic-blue',   label:'Book Titles',       val: total },
+      { icon:'copy',           cls:'ic-purple', label:'Total Copies',      val: totalCp },
+      { icon:'circle-check',   cls:'ic-green',  label:'Available Copies',  val: avail },
+      { icon:'book-reader',    cls:'ic-yellow', label:'Currently Issued',   val: issued },
+    ].map(s=>`<div class="stat-card">
+      <div class="stat-icon ${s.cls}"><i class="fa fa-${s.icon}"></i></div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div></div>`).join('');
+
+    renderBooks();
+  } catch(e) {
+    document.getElementById('lib-stats').innerHTML = `<div class="stat-card"><div class="empty-state"><i class="fa fa-plug"></i><h3>Cannot connect</h3></div></div>`;
+  }
+}
+
+document.getElementById('book-search').addEventListener('input', renderBooks);
+
+function renderBooks() {
+  const q = document.getElementById('book-search').value.toLowerCase();
+  const books = allBooks.filter(b => !q || b.title.toLowerCase().includes(q) || (b.isbn||'').toLowerCase().includes(q));
+  const grid = document.getElementById('books-grid');
+  grid.innerHTML = books.length ? books.map(b => {
+    const avail = Number(b.available_copies||0), iss = Number(b.issued_copies||0);
+    return `<div class="book-card">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div class="book-icon">📖</div>
+        <div style="flex:1;min-width:0">
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">${b.authors||'Unknown Author'}</div>
+          <div class="book-author" style="margin-top:2px;font-family:var(--font-mono)">${b.isbn||'—'}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted)">
+        <span>${b.category_name||'General'}</span>
+        ${b.edition?`· Ed. ${b.edition}`:''}
+        ${b.publication_year?`· ${b.publication_year}`:''}
+      </div>
+      <div style="font-size:11px;color:var(--dim)">${b.publisher_name||''}</div>
+      <div class="copy-pills">
+        <span class="copy-pill ${avail>0?'avail':'none'}">${avail} Available</span>
+        ${iss>0?`<span class="copy-pill issued">${iss} Issued</span>`:''}
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fa fa-book"></i><h3>No books found</h3></div>`;
+}
+
+async function loadIssues() {
+  const tbody = document.getElementById('issues-tbody');
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading-overlay"><div class="spinner"></div></div></td></tr>';
+  try {
+    const issues = await fetch(`${API}/api/library/issues`).then(r=>r.json());
+    if (!issues.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fa fa-inbox"></i><h3>No issues found</h3></div></td></tr>`; return; }
+    tbody.innerHTML = issues.map(i => {
+      const returned = !!i.return_date;
+      const overdue  = !returned && Number(i.days_overdue) > 0;
+      return `<tr class="${overdue?'overdue-row':''}">
+        <td style="font-size:13px;font-weight:600;color:#fff;max-width:200px">${i.book_title}</td>
+        <td class="text-sm">${i.member_name||'—'}</td>
+        <td class="text-mono text-sm">${i.registration_no||'—'}</td>
+        <td class="text-mono text-sm">${i.issue_date}</td>
+        <td class="text-mono text-sm">${i.due_date}</td>
+        <td>${returned
+          ? `<span class="badge badge-green">Returned ${i.return_date}</span>`
+          : `<span class="badge badge-yellow">Active</span>`}</td>
+        <td>${overdue
+          ? `<span class="badge badge-red">${i.days_overdue}d overdue</span>`
+          : returned ? '—' : `<span class="badge badge-gray">On time</span>`}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fa fa-plug"></i><h3>Error loading data</h3></div></td></tr>`;
+  }
+}
+
+loadLibrary();
+</script>
+</body>
+</html>
