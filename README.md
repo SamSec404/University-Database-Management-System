@@ -658,7 +658,7 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 🏠 Dashboard
 
 <p align="center">
-  <img width="800" height="700" alt="dashboard" src="https://github.com/user-attachments/assets/29f156ee-c7d4-429a-825b-46ad7a073576" />
+  <img width="1400" height="700" alt="dashboard" src="https://github.com/user-attachments/assets/29f156ee-c7d4-429a-825b-46ad7a073576" />
 
 </p>
 
@@ -667,7 +667,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 👨‍🎓 Students Management
 
 <p align="center">
-  <img width="700" alt="Students" src="screenshots/students.png" />
+  <img width="1915" height="834" alt="Students" src="https://github.com/user-attachments/assets/2c4e23a2-1afe-4558-a6e9-71c13866d72e" />
+
 </p>
 
 ---
@@ -675,7 +676,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 📚 Courses & Schedule
 
 <p align="center">
-  <img width="700" alt="Courses" src="screenshots/courses.png" />
+  <img width="1908" height="866" alt="Courses" src="https://github.com/user-attachments/assets/20027b33-8836-4918-a0c0-f5b0e42cde52" />
+
 </p>
 
 ---
@@ -683,7 +685,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 📄 Transcript Viewer
 
 <p align="center">
-  <img width="700" alt="Transcript" src="screenshots/transcript.png" />
+  <img width="1919" height="676" alt="Transcript" src="https://github.com/user-attachments/assets/fcd1a8a5-3d3f-4740-9699-92022076c30c" />
+
 </p>
 
 ---
@@ -691,7 +694,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 📖 Library
 
 <p align="center">
-  <img width="700" alt="Library" src="screenshots/library.png" />
+  <img width="1902" height="770" alt="Library" src="https://github.com/user-attachments/assets/b3f0467e-881c-492b-88b2-eab28ca89bd9" />
+
 </p>
 
 ---
@@ -699,7 +703,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 💰 Finance
 
 <p align="center">
-  <img width="700" alt="Finance" src="screenshots/finance.png" />
+  <img width="1906" height="925" alt="Finance" src="https://github.com/user-attachments/assets/cb4b9d8c-3170-400c-923a-1db96fe8ea1d" />
+
 </p>
 
 ---
@@ -707,7 +712,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 🏠 Hostel
 
 <p align="center">
-  <img width="700" alt="Hostel" src="screenshots/hostel.png" />
+  <img width="1909" height="938" alt="Hostel" src="https://github.com/user-attachments/assets/a1a64266-07c9-4fae-ab73-f0262c88ff53" />
+
 </p>
 
 ---
@@ -715,7 +721,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 🚌 Transport
 
 <p align="center">
-  <img width="700" alt="Transport" src="screenshots/transport.png" />
+  <img width="1909" height="696" alt="Transport" src="https://github.com/user-attachments/assets/beaf12ce-e26b-4f67-8002-a37cfcdddeab" />
+
 </p>
 
 ---
