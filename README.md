@@ -658,7 +658,8 @@ CALL sp_return_library_book(1, '2024-11-20');
 ### 🏠 Dashboard
 
 <p align="center">
-  <img width="700" alt="Dashboard" src="screenshots/dashboard.png" />
+  <img width="800" height="700" alt="dashboard" src="https://github.com/user-attachments/assets/29f156ee-c7d4-429a-825b-46ad7a073576" />
+
 </p>
 
 ---
