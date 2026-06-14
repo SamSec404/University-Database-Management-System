@@ -4,7 +4,7 @@
 
 <br/>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Inter&weight=700&size=22&duration=2800&pause=900&color=7C3AED&center=true&vCenter=true&width=950&lines=127+Tables+%E2%80%A2+7+ERP+Modules+%E2%80%A2+Fully+Normalized+Schema;10+Views+%E2%80%A2+8+Stored+Procedures+%E2%80%A2+6+Triggers;Academic+%7C+Finance+%7C+Library+%7C+Hostel+%7C+Transport+%7C+HR+%7C+Security;Node.js+REST+API+%E2%80%A2+Vanilla+JS+Frontend;FAST-NUCES+%E2%80%A2+Database+Systems+Lab+%E2%80%A2+Spring+2025" />
+<img src="https://readme-typing-svg.herokuapp.com?font=Inter&weight=700&size=22&duration=2800&pause=900&color=7C3AED&center=true&vCenter=true&width=950&lines=127+Tables+%E2%80%A2+8+ERP+Modules+%E2%80%A2+Fully+Normalized+Schema;10+Views+%E2%80%A2+8+Stored+Procedures+%E2%80%A2+6+Triggers;Academic+%7C+Finance+%7C+Library+%7C+Hostel+%7C+Transport+%7C+HR+%7C+Security;Node.js+REST+API+%E2%80%A2+8+Live+Frontend+Pages;FAST-NUCES+%E2%80%A2+Database+Systems+Lab+%E2%80%A2+Spring+2025" />
 
 <br/><br/>
 
@@ -12,7 +12,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express.js-REST_API-000000?style=for-the-badge&logo=express&logoColor=white)
 ![Frontend](https://img.shields.io/badge/Frontend-HTML%2FCSS%2FJS-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![XAMPP](https://img.shields.io/badge/XAMPP-phpMyAdmin-FB7A24?style=for-the-badge&logo=xampp&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-Visualizations-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Complete-22c55e?style=for-the-badge)
 ![Academic](https://img.shields.io/badge/Academic-Project-7c3aed?style=for-the-badge)
 
@@ -23,7 +23,7 @@
 ### Enterprise-Grade Academic Information Platform
 
 <p align="center">
-A production-quality, fully normalized university ERP built with MySQL 8.0. The system spans seven institutional modules — Academic, Finance, Library, Hostel, Transport, HR, and Security — with 127 relational tables, a REST API layer, stored procedures, triggers, views, and a live frontend dashboard.
+A production-quality, fully normalized university ERP built with MySQL 8.0. The system spans eight institutional modules — Academic, Students, Finance, Library, Hostel, Transport, HR, and Security — with 127 relational tables, a 29-route REST API, stored procedures, triggers, views, and a live 8-page frontend dashboard.
 </p>
 
 <br/>
@@ -101,26 +101,29 @@ Spring 2025
 - [⚙ Backend API](#-backend-api)
 - [🖥 Frontend Pages](#-frontend-pages)
 - [🚀 Getting Started](#-getting-started)
+- [🧪 Running Tests](#-running-tests)
 - [👁 Views](#-views)
 - [🧠 Stored Procedures](#-stored-procedures)
 - [⚡ Triggers](#-triggers)
 - [🔍 Sample Queries](#-sample-queries)
 - [📸 Application Preview](#-application-preview)
 - [🛠 Tech Stack](#-tech-stack)
+- [🔮 Possible Improvements](#-possible-improvements)
 - [📜 License](#-license)
 
 ---
 
 ## 📌 Project Overview
 
-The **University ERP Database System** is a comprehensive, enterprise-grade relational database solution that models the complete operational lifecycle of a modern university. It goes far beyond a basic academic schema — covering seven institutional modules with full referential integrity, business logic enforced at the database tier, and a connected full-stack application.
+The **University ERP Database System** is a comprehensive, enterprise-grade relational database solution that models the complete operational lifecycle of a modern university. It goes far beyond a basic academic schema — covering eight institutional modules with full referential integrity, business logic enforced at the database tier, and a connected full-stack application.
 
 **What makes this system stand out:**
 
-- **Depth** — 127 relational tables across 7 fully integrated modules
+- **Depth** — 127 relational tables across 8 fully integrated modules
 - **Correctness** — All foreign keys, cascades, constraints, and indexes are properly defined
 - **Intelligence** — Business logic is enforced inside the database via stored procedures, triggers, and views — not just in application code
 - **Completeness** — Every module includes its own fee/billing, staff, complaints, and audit capabilities
+- **Connected** — A real Express REST API (29 routes) and 8 live frontend pages query this schema directly, with no mock data
 - **Scale** — Designed to support real-world university operations with thousands of students, courses, and transactions
 
 ---
@@ -131,13 +134,13 @@ The **University ERP Database System** is a comprehensive, enterprise-grade rela
 
 | Component | Count | Details |
 |:---|:---:|:---|
-| 🗃️ Database Tables | **127** | Across 7 ERP modules |
-| 📦 ERP Modules | **7** | Academic, Finance, Library, Hostel, Transport, HR, Security |
+| 🗃️ Database Tables | **127** | Across 8 ERP modules |
+| 📦 ERP Modules | **8** | Academic, Students, Finance, Library, Hostel, Transport, HR, Security |
 | 👁️ Database Views | **10** | Profile, schedule, fees, attendance, workload, occupancy |
 | 🧠 Stored Procedures | **8** | Enroll, CGPA, grade, invoice, transcript, library, report |
 | ⚡ Triggers | **6** | Capacity, CGPA, payment, bed, book issue/return |
-| 🌐 REST API Routes | **10** | Full CRUD for core entities |
-| 🖥️ Frontend Pages | **4** | Dashboard, Students, Courses, Transcript |
+| 🌐 REST API Routes | **29** | Students, courses, finance, library, hostel, transport & more |
+| 🖥️ Frontend Pages | **8** | Dashboard, Students, Courses, Transcript, Library, Finance, Hostel, Transport |
 | 🔍 SQL Sample Queries | **15** | JOINs, subqueries, window functions, aggregates |
 
 </div>
@@ -149,8 +152,9 @@ The **University ERP Database System** is a comprehensive, enterprise-grade rela
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │                          FRONTEND LAYER                              │
-│              HTML5 · CSS3 · Vanilla JavaScript                       │
-│        Dashboard  │  Students  │  Courses  │  Transcript             │
+│              HTML5 · CSS3 · Vanilla JavaScript · Chart.js            │
+│  Dashboard │ Students │ Courses │ Transcript │ Library │ Finance     │
+│                    Hostel │ Transport                                │
 └────────────────────────────┬─────────────────────────────────────────┘
                              │  HTTP / fetch API
                              ▼
@@ -158,16 +162,18 @@ The **University ERP Database System** is a comprehensive, enterprise-grade rela
 │                          BACKEND LAYER                               │
 │                     Node.js + Express.js                             │
 │                                                                      │
-│   GET /api/students        GET /api/courses       GET /api/schedule  │
-│   GET /api/transcript/:id  POST /api/enroll       PUT /api/grade     │
-│   GET /api/departments     GET /api/enrollments   GET /api/employees │
-│   GET /api/instructors                                               │
+│   /api/stats          /api/students        /api/students/:id         │
+│   /api/courses        /api/sections        /api/semesters            │
+│   /api/programs       /api/departments     /api/instructors          │
+│   /api/enrollments    /api/transcript/:id  /api/enroll  (POST)       │
+│   /api/grade  (PUT)   /api/library/*       /api/finance/*            │
+│   /api/hostel/*       /api/transport/*     /api/view/*               │
 └────────────────────────────┬─────────────────────────────────────────┘
                              │  mysql2 driver · parameterized queries
                              ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │                         DATABASE LAYER                               │
-│                    MySQL 8.0 · phpMyAdmin · XAMPP                    │
+│                    MySQL 8.0 · phpMyAdmin / CLI                       │
 │                                                                      │
 │   127 Tables  │  10 Views  │  8 Procedures  │  6 Triggers           │
 │                                                                      │
@@ -184,7 +190,7 @@ The **University ERP Database System** is a comprehensive, enterprise-grade rela
 
 ## 🗄 Database Modules
 
-The schema is divided into **7 fully independent yet interlinked ERP modules**. Each module manages its own entities, fees, and staff relationships.
+The schema is divided into **8 fully independent yet interlinked ERP modules**. Each module manages its own entities, fees, and staff relationships.
 
 <br/>
 
@@ -310,55 +316,108 @@ The schema is divided into **7 fully independent yet interlinked ERP modules**. 
 ## 📁 File Structure
 
 ```
-📦 University-Database-Management/
+📦 University-Database-Management-System/
 │
-├── 📂 backend/
-│   ├── server.js               ← Express REST API server
-│   ├── package.json
-│   └── node_modules/
+├── server.js                       ← Express REST API server (29 routes)
+├── package.json                    ← Dependencies & npm scripts
+├── .env.example                    ← Environment variable template
+├── .gitignore
+├── LICENSE
+├── README.md
 │
-├── 📂 database/
-│   ├── schema.sql              ← 127-table ERP schema (MySQL 8.0)
-│   ├── seed_data.sql           ← Sample data for all modules
-│   ├── views.sql               ← 10 reusable database views
-│   ├── procedures.sql          ← 8 stored procedures + 6 triggers
-│   └── queries.sql             ← 15 sample SQL queries
+├── index.html                      ← Dashboard
+├── students.html                   ← Student management
+├── courses.html                    ← Course catalog & class schedule
+├── transcript.html                 ← Transcript viewer
+├── library.html                    ← Library management
+├── finance.html                    ← Finance & fee management
+├── hostel.html                     ← Hostel management
+├── transport.html                  ← Transport management
+├── style.css                       ← Global stylesheet
 │
-├── 📂 frontend/
-│   ├── index.html              ← Dashboard
-│   ├── students.html           ← Student management
-│   ├── courses.html            ← Course catalog & schedule
-│   ├── transcript.html         ← Transcript viewer
-│   └── style.css
+├── University_Database.sql              ← 127-table schema (MySQL 8.0)
+├── University-Database-DataSet.sql      ← Sample data for all modules
+├── University-Database-Views.sql        ← 10 reporting views
+├── University-Database-Procedures.sql   ← 8 stored procedures + 6 triggers
 │
-├── 📂 screenshots/
+├── tests/
+│   └── api.test.js                 ← Jest + Supertest API tests
+│
+├── screenshots/
 │   ├── dashboard.png
 │   ├── students.png
 │   ├── courses.png
-│   └── transcript.png
+│   ├── transcript.png
+│   ├── library.png
+│   ├── finance.png
+│   ├── hostel.png
+│   └── transport.png
 │
-├── 📂 diagrams/
-│   └── University_ERP_ERD.drawio
-│
-└── README.md
+└── diagrams/
+    └── University_ERP_ERD.png
 ```
 
 ---
 
 ## ⚙ Backend API
 
+Base URL: `http://localhost:3000`
+
+### Dashboard
+
 | Method | Endpoint | Description |
 |:---|:---|:---|
-| `GET` | `/api/students` | Retrieve all students with program info |
-| `GET` | `/api/courses` | Retrieve full course catalog |
-| `GET` | `/api/departments` | Retrieve all departments with stats |
-| `GET` | `/api/enrollments` | Retrieve enrollment records |
-| `GET` | `/api/instructors` | Retrieve instructor list |
-| `GET` | `/api/schedule` | Retrieve full section timetable |
-| `GET` | `/api/transcript/:student_id` | Student transcript (calls `sp_get_student_transcript`) |
-| `GET` | `/api/employees` | Retrieve employee list |
-| `POST` | `/api/enroll` | Enroll student (calls `sp_enroll_student`) |
-| `PUT` | `/api/grade` | Update grade (calls `sp_update_grade`) |
+| `GET` | `/api/stats` | Overall counts, status breakdown, top students by CGPA, monthly enrollment trend |
+
+### Students
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/students` | List students — supports `?search=`, `?status=`, `?program_id=` |
+| `GET` | `/api/students/:id` | Single student profile |
+| `GET` | `/api/enrollments?student_id=` | Enrollment history for a student |
+| `GET` | `/api/transcript/:id` | Full academic transcript (calls `sp_get_student_transcript`) |
+| `POST` | `/api/enroll` | Enroll a student in a section (calls `sp_enroll_student`) |
+| `PUT` | `/api/grade` | Update a grade and trigger CGPA recalculation (calls `sp_update_grade`) |
+
+### Academics
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/courses` | Course catalog with department info, section count, total enrolled |
+| `GET` | `/api/sections` | Sections with schedule, instructor, room — supports `?semester_id=` |
+| `GET` | `/api/semesters` | All semesters with their parent academic sessions |
+| `GET` | `/api/programs` | All academic programs |
+| `GET` | `/api/departments` | All departments |
+| `GET` | `/api/instructors` | All instructors |
+| `GET` | `/api/view/instructor-workload` | Instructor workload report (`vw_instructor_workload`) |
+| `GET` | `/api/view/attendance` | Attendance summary with shortage flags (`vw_attendance_summary`) |
+
+### Library
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/library/books` | Book catalog with author, publisher, and copy availability |
+| `GET` | `/api/library/issues` | Issue/return log with overdue calculation |
+
+### Finance
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/finance/summary` | Totals (invoiced, collected, pending, overdue) and breakdown by status |
+| `GET` | `/api/finance/invoices` | Full invoice register with student and semester info |
+
+### Hostel
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/hostel/overview` | Per-hostel bed occupancy stats + complaints list |
+
+### Transport
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/transport/overview` | Fleet status by type/condition + routes with registered student counts |
 
 ---
 
@@ -366,10 +425,14 @@ The schema is divided into **7 fully independent yet interlinked ERP modules**. 
 
 | Page | Route | Key Features |
 |:---|:---|:---|
-| **Dashboard** | `index.html` | Live module stats, top-CGPA students, quick navigation |
-| **Students** | `students.html` | Search by name/reg no, enrollment list, CGPA display |
-| **Courses** | `courses.html` | Course catalog, section timetable, enrolled counts |
-| **Transcript** | `transcript.html` | Full per-student transcript with grade point breakdown |
+| **Dashboard** | `index.html` | Live module stats, top-CGPA students, status & program distribution charts, monthly enrollment trend |
+| **Students** | `students.html` | Search by name/registration number, filter by status & program, detail modal with enrollment history |
+| **Courses** | `courses.html` | Card/table catalog view with department filter, full weekly class schedule with seat availability |
+| **Transcript** | `transcript.html` | Live student search, semester-by-semester academic record, auto-calculated GPA, print view |
+| **Library** | `library.html` | Book catalog with availability pills, issue/return log with overdue tracking |
+| **Finance** | `finance.html` | Revenue overview, invoice status charts, searchable invoice register |
+| **Hostel** | `hostel.html` | Per-hostel occupancy bars, bed distribution chart, complaints register with status filter |
+| **Transport** | `transport.html` | Fleet overview by type/status, route list with registered student counts |
 
 ---
 
@@ -379,7 +442,7 @@ The schema is divided into **7 fully independent yet interlinked ERP modules**. 
 
 Ensure the following are installed:
 
-- [XAMPP](https://www.apachefriends.org/) (Apache + MySQL)
+- [MySQL 8.0](https://dev.mysql.com/downloads/) (or via [XAMPP](https://www.apachefriends.org/))
 - [Node.js](https://nodejs.org/) v18+
 - A modern web browser
 
@@ -388,16 +451,16 @@ Ensure the following are installed:
 ### Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/Malik-Sanaullah/University-Database-Management-.git
-cd University-Database-Management-
+git clone https://github.com/SamSec404/University-Database-Management-System.git
+cd University-Database-Management-System
 ```
 
 ---
 
 ### Step 2 — Set Up the Database
 
-1. Open **XAMPP** and start **Apache** and **MySQL**
-2. Open **phpMyAdmin** at `http://localhost/phpmyadmin`
+1. Start MySQL (via XAMPP or your local MySQL service)
+2. Open phpMyAdmin or the MySQL CLI
 3. Create a new database:
 
 ```sql
@@ -407,25 +470,38 @@ CREATE DATABASE university_erp;
 4. Import SQL files **in this exact order**:
 
 ```
-1.  schema.sql          ← Creates all 127 tables with constraints and indexes
-2.  seed_data.sql       ← Populates all modules with sample data
-3.  views.sql           ← Creates 10 analytical views
-4.  procedures.sql      ← Creates 8 stored procedures and 6 triggers
+1.  University_Database.sql              ← Creates all 127 tables with constraints and indexes
+2.  University-Database-DataSet.sql      ← Populates all modules with sample data
+3.  University-Database-Views.sql        ← Creates 10 analytical views
+4.  University-Database-Procedures.sql   ← Creates 8 stored procedures and 6 triggers
+```
+
+Via CLI:
+
+```bash
+mysql -u root -p university_erp < University_Database.sql
+mysql -u root -p university_erp < University-Database-DataSet.sql
+mysql -u root -p university_erp < University-Database-Views.sql
+mysql -u root -p university_erp < University-Database-Procedures.sql
 ```
 
 ---
 
-### Step 3 — Configure Backend
+### Step 3 — Configure Environment Variables
 
-Open `backend/server.js` and confirm the DB connection matches your XAMPP setup:
+```bash
+cp .env.example .env
+```
 
-```js
-const db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',               // default XAMPP has no password
-  database : 'university_erp'
-});
+Edit `.env` with your MySQL credentials:
+
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=university_erp
+DB_PORT=3306
+PORT=3000
 ```
 
 ---
@@ -433,27 +509,38 @@ const db = mysql.createConnection({
 ### Step 4 — Install Dependencies & Start Server
 
 ```bash
-cd backend
 npm install
-node server.js
+npm start
 ```
 
 Expected output:
 
 ```
-🚀 Server running at http://localhost:3000
-✅ Connected to MySQL database!
+🎓 University ERP running at http://localhost:3000
+✅ MySQL connected to university_erp
 ```
 
 ---
 
 ### Step 5 — Launch Frontend
 
-Simply open in your browser:
+Open your browser to:
 
 ```
-frontend/index.html
+http://localhost:3000
 ```
+
+All 8 pages (Dashboard, Students, Courses, Transcript, Library, Finance, Hostel, Transport) are served directly by the Express server.
+
+---
+
+## 🧪 Running Tests
+
+```bash
+npm test
+```
+
+Tests use **Jest + Supertest** to verify all API endpoints respond correctly against a live MySQL connection. Make sure the database is set up and `.env` is configured before running tests.
 
 ---
 
@@ -541,7 +628,7 @@ CALL sp_return_library_book(1, '2024-11-20');
 
 ## 🔍 Sample Queries
 
-The `queries.sql` file contains **15 production-quality SQL queries** demonstrating advanced MySQL features:
+15 production-quality SQL queries demonstrating advanced MySQL features:
 
 | # | Query | Concepts Used |
 |:---:|:---|:---|
@@ -550,7 +637,7 @@ The `queries.sql` file contains **15 production-quality SQL queries** demonstrat
 | 3 | Students with attendance below 75% | Multi-table JOIN, percentage calculation |
 | 4 | Monthly fee collection summary | `DATE_FORMAT`, `SUM`, GROUP BY date |
 | 5 | Instructors teaching overloaded sections | Self-join on section, `COUNT` with `HAVING` |
-| 6 | Books overdue in library with fine amount | DATEDIFF, conditional JOIN |
+| 6 | Books overdue in library with fine amount | `DATEDIFF`, conditional JOIN |
 | 7 | Hostel occupancy rate per block | Nested aggregation, percentage |
 | 8 | Students on merit scholarship with GPA | Multi-module JOIN across finance + academic |
 | 9 | Prerequisite chain for a course | Recursive self-join on `prerequisite` |
@@ -565,10 +652,13 @@ The `queries.sql` file contains **15 production-quality SQL queries** demonstrat
 
 ## 📸 Application Preview
 
+> Screenshots below are placeholders — replace with real captures of each
+> page after running the app locally and save into `screenshots/`.
+
 ### 🏠 Dashboard
 
 <p align="center">
-  <img width="700" alt="Dashboard" src="https://github.com/user-attachments/assets/af2f3cb5-a141-475b-85fb-df80b5c0007f" />
+  <img width="700" alt="Dashboard" src="screenshots/dashboard.png" />
 </p>
 
 ---
@@ -576,7 +666,7 @@ The `queries.sql` file contains **15 production-quality SQL queries** demonstrat
 ### 👨‍🎓 Students Management
 
 <p align="center">
-  <img width="700" alt="Students" src="https://github.com/user-attachments/assets/64f9b253-8eb4-4641-b8e3-fdb916899d54" />
+  <img width="700" alt="Students" src="screenshots/students.png" />
 </p>
 
 ---
@@ -584,13 +674,7 @@ The `queries.sql` file contains **15 production-quality SQL queries** demonstrat
 ### 📚 Courses & Schedule
 
 <p align="center">
-  <img width="700" alt="Course Catalogue" src="https://github.com/user-attachments/assets/de4f8eab-cac1-40c6-8646-7dd7513f027a" />
-</p>
-
-<p align="center">
-  <img width="420" alt="Class Schedule" src="https://github.com/user-attachments/assets/31feee3d-85da-4706-8cdf-afdff67e9bf9" />
-  &nbsp;&nbsp;
-  <img width="420" alt="All Courses" src="https://github.com/user-attachments/assets/495eb1ad-b97d-4a33-ab6e-5278d4c76be8" />
+  <img width="700" alt="Courses" src="screenshots/courses.png" />
 </p>
 
 ---
@@ -598,7 +682,39 @@ The `queries.sql` file contains **15 production-quality SQL queries** demonstrat
 ### 📄 Transcript Viewer
 
 <p align="center">
-  <img width="700" alt="Transcript" src="https://github.com/user-attachments/assets/89040b62-304f-4395-88e6-14a3492e0805" />
+  <img width="700" alt="Transcript" src="screenshots/transcript.png" />
+</p>
+
+---
+
+### 📖 Library
+
+<p align="center">
+  <img width="700" alt="Library" src="screenshots/library.png" />
+</p>
+
+---
+
+### 💰 Finance
+
+<p align="center">
+  <img width="700" alt="Finance" src="screenshots/finance.png" />
+</p>
+
+---
+
+### 🏠 Hostel
+
+<p align="center">
+  <img width="700" alt="Hostel" src="screenshots/hostel.png" />
+</p>
+
+---
+
+### 🚌 Transport
+
+<p align="center">
+  <img width="700" alt="Transport" src="screenshots/transport.png" />
 </p>
 
 ---
@@ -609,20 +725,30 @@ The `queries.sql` file contains **15 production-quality SQL queries** demonstrat
 
 | Layer | Technology | Purpose |
 |:---|:---|:---|
-| 🎨 **Frontend** | HTML5, CSS3, Vanilla JavaScript | UI, dashboard, dynamic data rendering |
-| ⚙️ **Backend** | Node.js, Express.js | REST API server, route handling |
-| 🗄️ **Database** | MySQL 8.0, phpMyAdmin | Relational data, procedures, triggers, views |
+| 🎨 **Frontend** | HTML5, CSS3, Vanilla JavaScript, Chart.js | UI, dashboards, charts, dynamic data rendering |
+| ⚙️ **Backend** | Node.js, Express.js | REST API server (29 routes), route handling |
+| 🗄️ **Database** | MySQL 8.0 | Relational data, procedures, triggers, views |
 | 🔌 **DB Driver** | mysql2 | Parameterized queries from Node.js |
-| 🧪 **API Testing** | Postman | Endpoint validation during development |
+| 🔐 **Config** | dotenv | Environment-based configuration, no hardcoded credentials |
+| 🧪 **Testing** | Jest, Supertest | API endpoint testing |
 | 🧠 **ER Modeling** | draw.io | Entity-relationship diagram design |
 | 💻 **IDE** | VS Code | Development environment |
-| 🌐 **Server** | XAMPP | Local Apache + MySQL stack |
 
 <br/>
 
 <img src="https://skillicons.dev/icons?i=html,css,js,nodejs,express,mysql,vscode,github" />
 
 </div>
+
+---
+
+## 🔮 Possible Improvements
+
+- Authentication & role-based access control using the existing `user_account` / `role` / `permission` tables
+- Pagination on large list endpoints (`/api/students`, `/api/courses`)
+- Admin forms to add/edit sections, students, and invoices directly from the UI
+- Deployed live demo (e.g. Railway/Render backend + PlanetScale MySQL)
+- CI pipeline running `npm test` on every push
 
 ---
 
@@ -634,7 +760,7 @@ Contributions and suggestions are welcome for educational purposes.
 
 ```bash
 # Fork the repository
-git fork https://github.com/Malik-Sanaullah/University-Database-Management-.git
+git fork https://github.com/SamSec404/University-Database-Management-System.git
 
 # Create a feature branch
 git checkout -b feature/your-feature-name
@@ -650,8 +776,7 @@ git push origin feature/your-feature-name
 
 ## 📜 License
 
-This project is developed strictly for **academic and educational purposes**.  
-Redistribution or commercial use without permission is not permitted.
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
 
 © 2025 FAST-NUCES — Group 13 · Ibrahim Khatak · Malik Muhammad Sanaullah
 
@@ -670,6 +795,6 @@ Redistribution or commercial use without permission is not permitted.
 
 ![Database Systems](https://img.shields.io/badge/Database%20Systems-Lab%20Project-7c3aed?style=for-the-badge)
 ![FAST-NUCES](https://img.shields.io/badge/FAST--NUCES-Spring%202025-1e3a8a?style=for-the-badge)
-![MySQL](https://img.shields.io/badge/127%20Tables-7%20Modules-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![MySQL](https://img.shields.io/badge/127%20Tables-8%20Modules-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
 </div>
