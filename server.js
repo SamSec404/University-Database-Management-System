@@ -3,6 +3,7 @@
 //  Node.js + Express + MySQL2
 //  Run: node server.js
 // ============================================================
+require('dotenv').config();
 const express  = require('express');
 const mysql    = require('mysql2');
 const cors     = require('cors');
@@ -15,10 +16,11 @@ app.use(express.static(path.join(__dirname)));
 
 // ── Database pool ────────────────────────────────────────────
 const pool = mysql.createPool({
-  host            : 'localhost',
-  user            : 'root',
-  password        : '',
-  database        : 'university_erp',
+  host            : process.env.DB_HOST || 'localhost',
+  user            : process.env.DB_USER || 'root',
+  password        : process.env.DB_PASSWORD || '',
+  database        : process.env.DB_NAME || 'university_erp',
+  port            : process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit : 10,
   queueLimit      : 0,
@@ -447,7 +449,11 @@ app.get('/hostel',      (_, res) => res.sendFile(path.join(__dirname,'hostel.htm
 app.get('/transport',   (_, res) => res.sendFile(path.join(__dirname,'transport.html')));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🎓 University ERP running at http://localhost:${PORT}`);
-  console.log(`✅ MySQL connected to university_erp\n`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🎓 University ERP running at http://localhost:${PORT}`);
+    console.log(`✅ MySQL connected to university_erp\n`);
+  });
+}
+
+module.exports = app;
