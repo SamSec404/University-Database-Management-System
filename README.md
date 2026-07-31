@@ -51,40 +51,13 @@ Spring 2025
 <td align="center" width="33%">
 
 ### 👥 Team
-**Group #13**
+**Group #--**
 
 </td>
 </tr>
 </table>
 
 ---
-
-## 👨‍💻 Developers
-
-<table>
-<tr>
-<td align="center" width="50%">
-
-<img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" width="100" style="border-radius:50%"/>
-
-### Muhammad Ibrahim Khatak
-`24P-0648`
-
-[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=flat-square&logo=github)](https://github.com/ibrahim-khatak)
-
-</td>
-<td align="center" width="50%">
-
-<img width="100" height="100" alt="SamSec404_under_1MB" src="https://github.com/user-attachments/assets/5e18358b-23ce-4e26-8ec8-17b836ea0274" />
-
-### Malik Muhammad Sanaullah
-`24P-0554`
-
-[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=flat-square&logo=github)](https://github.com/SamSec404)
-
-</td>
-</tr>
-</table>
 
 </div>
 
