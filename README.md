@@ -28,37 +28,6 @@ A production-quality, fully normalized university ERP built with MySQL 8.0. The 
 
 <br/>
 
-<table>
-<tr>
-<td align="center" width="33%">
-
-### 🏫 Institution
-National University of Computer  
-& Emerging Sciences  
-**(FAST-NUCES)**
-
-</td>
-<td align="center" width="33%">
-
-### 📘 Course
-**Database Systems Lab**  
-Spring 2025
-
-**Theory** — Sir Shoaib Khan  
-**Lab** — Muhammad Mehdi
-
-</td>
-<td align="center" width="33%">
-
-### 👥 Team
-**Group #--**
-
-</td>
-</tr>
-</table>
-
----
-
 </div>
 
 ---
