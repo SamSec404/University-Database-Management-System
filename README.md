@@ -738,7 +738,6 @@ This project is licensed under the **MIT License** — see [LICENSE](LICENSE) fo
 <br/>
 
 ![Database Systems](https://img.shields.io/badge/Database%20Systems-Lab%20Project-7c3aed?style=for-the-badge)
-![FAST-NUCES](https://img.shields.io/badge/FAST--NUCES-Spring%202025-1e3a8a?style=for-the-badge)
 ![MySQL](https://img.shields.io/badge/127%20Tables-8%20Modules-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
 </div>
