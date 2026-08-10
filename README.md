@@ -738,8 +738,6 @@ This project is licensed under the **MIT License** — see [LICENSE](LICENSE) fo
 
 ## ⭐ If this project helped you, please consider starring the repository!
 
-### Made with ❤️ by Group 13 — FAST-NUCES
-**Ibrahim Khatak** `24P-0648` &nbsp;•&nbsp; **Malik Muhammad Sanaullah** `24P-0554`
 
 <br/>
 
