@@ -728,10 +728,6 @@ git push origin feature/your-feature-name
 
 This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
 
-© 2025 FAST-NUCES — Group 13 · Ibrahim Khatak · Malik Muhammad Sanaullah
-
----
-
 <div align="center">
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=150&color=0:9333ea,50:7c3aed,100:1e3a8a&section=footer"/>
